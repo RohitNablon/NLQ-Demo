@@ -1,0 +1,412 @@
+[
+    {
+        "Question": "Most selling item in Webster",
+        "Answer": "In Webster, the top-selling item is **Black Velvet**, with **44,498** sold.",
+        "SQL_Response": [
+            [
+                11788,
+                "Black Velvet",
+                44498
+            ]
+        ],
+        "SQL_Query": "SELECT\n  dp.item_number,\n  dp.item_description,\n  SUM(fs.bottles_sold) AS total_bottles_sold\nFROM Fact_Sales fs\nJOIN Dim_Store ds\n  ON ds.store_number = fs.store_number\nJOIN Dim_Product dp\n  ON dp.item_number = fs.item_number\nWHERE ds.county = 'Webster'\nGROUP BY\n  dp.item_number,\n  dp.item_description\nORDER BY total_bottles_sold DESC\nLIMIT 1;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Store",
+            "Dim_Product"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.store_number",
+            "Fact_Sales.item_number",
+            "Fact_Sales.bottles_sold",
+            "Dim_Store.store_number",
+            "Dim_Store.county",
+            "Dim_Product.item_number",
+            "Dim_Product.item_description"
+        ],
+        "Logic": [
+            "Filter sales rows to those where the related store is in county 'Webster'.",
+            "Aggregate bottles_sold by item_number (and item_description) to compute total bottles sold per item within Webster.",
+            "Sort totals descending and return the top 1 item."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "Which Vendor has sold the most unique items?",
+        "Answer": "**Diageo Americas** has sold the most unique items, with **759** different items sold.",
+        "SQL_Response": [
+            [
+                260,
+                "Diageo Americas",
+                759
+            ]
+        ],
+        "SQL_Query": "WITH vendor_item_counts AS (\n  SELECT\n    fs.vendor_number,\n    COUNT(DISTINCT fs.item_number) AS unique_items_sold\n  FROM Fact_Sales fs\n  WHERE fs.vendor_number IS NOT NULL\n    AND fs.item_number IS NOT NULL\n  GROUP BY fs.vendor_number\n)\nSELECT\n  v.vendor_number,\n  v.vendor_name,\n  vic.unique_items_sold\nFROM vendor_item_counts vic\nJOIN Dim_Vendor v\n  ON v.vendor_number = vic.vendor_number\nORDER BY vic.unique_items_sold DESC, v.vendor_number ASC\nLIMIT 1;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Vendor"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.vendor_number",
+            "Fact_Sales.item_number",
+            "Dim_Vendor.vendor_number",
+            "Dim_Vendor.vendor_name"
+        ],
+        "Logic": [
+            "Filter Fact_Sales rows to ensure vendor_number and item_number are not NULL (defensive, though both are defined as NOT NULL in schema).",
+            "Group Fact_Sales by vendor_number and compute unique_items_sold as COUNT(DISTINCT item_number).",
+            "Join the aggregated results to Dim_Vendor on vendor_number to fetch vendor_name.",
+            "Order by unique_items_sold descending (tie-break by vendor_number ascending) and LIMIT 1 to return the top vendor."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "Top 5 stores by total sales amount?",
+        "Answer": "Here are the top 5 stores by total sales amount:\n\n1. **Hy-Vee #3 / BDI / Des Moines** \u2014 **$47,121,172.41**\n2. **Central City 2** \u2014 **$34,414,664.67**\n3. **Hy-Vee Wine and Spirits / Iowa City** \u2014 **$19,474,016.21**\n4. **Sam's Club 8162 / Cedar Rapids** \u2014 **$19,118,938.32**\n5. **Sam's Club 6344 / Windsor Heights** \u2014 **$18,556,623.62**\n\n**What this means:** The top store (Hy-Vee #3 / BDI / Des Moines) leads by a wide margin, with about **$12.7M more** in total sales than the #2 store (Central City 2).",
+        "SQL_Response": [
+            [
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                47121172.41
+            ],
+            [
+                4829,
+                "Central City 2",
+                34414664.67
+            ],
+            [
+                2512,
+                "Hy-Vee Wine and Spirits / Iowa City",
+                19474016.21
+            ],
+            [
+                3385,
+                "Sam's Club 8162 / Cedar Rapids",
+                19118938.32
+            ],
+            [
+                3420,
+                "Sam's Club 6344 / Windsor Heights",
+                18556623.62
+            ]
+        ],
+        "SQL_Query": "SELECT\n  s.store_number,\n  s.store_name,\n  ROUND(SUM(CAST(REPLACE(REPLACE(fs.sale_amount, '$', ''), ',', '') AS REAL)), 2) AS total_sales_amount\nFROM Fact_Sales fs\nJOIN Dim_Store s\n  ON fs.store_number = s.store_number\nGROUP BY\n  s.store_number,\n  s.store_name\nORDER BY\n  total_sales_amount DESC\nLIMIT 5;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Store"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.store_number",
+            "Fact_Sales.sale_amount",
+            "Dim_Store.store_number",
+            "Dim_Store.store_name"
+        ],
+        "Logic": [
+            "Step 1: Join Fact_Sales to Dim_Store using fs.store_number = s.store_number to get store attributes.",
+            "Step 2: Convert sale_amount from currency text to numeric by stripping '$' and ',' then CAST to REAL.",
+            "Step 3: SUM the numeric sale amounts per store (GROUP BY store_number, store_name).",
+            "Step 4: ORDER BY total sales descending and LIMIT 5 to return the top 5 stores."
+        ],
+        "Need_Visulization": true
+    },
+    {
+        "Question": "Bottom 5 Categories by total sales amount?",
+        "Answer": "Here are the **5 lowest-selling categories by total sales amount** (from lowest to higher):\n\n1. **Triple Sec** \u2014 **$26.01**\n2. **Cocktails / RTD** \u2014 **$39.06**\n3. **Neutral Grain Spirits** \u2014 **$165.06**\n4. **Temporary & Specialty Packages** \u2014 **$1,221.00**\n5. **Single Barrel Bourbon Whiskies** \u2014 **$1,808.28**\n\nIn plain terms: **Triple Sec and Cocktails / RTD sold very little overall (under $50 each)**, and even the 5th-lowest category is still **under $2K** in total sales.",
+        "SQL_Response": [
+            [
+                1081500,
+                "Triple Sec",
+                26.009999999999998
+            ],
+            [
+                1070000,
+                "Cocktails / RTD",
+                39.06
+            ],
+            [
+                1091200,
+                "Neutral Grain Spirits",
+                165.06
+            ],
+            [
+                1700000,
+                "Temporary &  Specialty Packages",
+                1221.0
+            ],
+            [
+                1011300,
+                "Single Barrel Bourbon Whiskies",
+                1808.28
+            ]
+        ],
+        "SQL_Query": "WITH sales_by_category AS (\n  SELECT\n    p.category AS category,\n    p.category_name AS category_name,\n    SUM(CAST(REPLACE(REPLACE(fs.sale_amount, '$', ''), ',', '') AS REAL)) AS total_sales_amount\n  FROM Fact_Sales fs\n  JOIN Dim_Product p\n    ON p.item_number = fs.item_number\n  GROUP BY\n    p.category,\n    p.category_name\n)\nSELECT\n  category,\n  category_name,\n  total_sales_amount\nFROM sales_by_category\nORDER BY total_sales_amount ASC\nLIMIT 5;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Product"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.item_number",
+            "Fact_Sales.sale_amount",
+            "Dim_Product.item_number",
+            "Dim_Product.category",
+            "Dim_Product.category_name"
+        ],
+        "Logic": [
+            "Step 1: Join Fact_Sales to Dim_Product using item_number to bring in category attributes.",
+            "Step 2: Convert sale_amount from currency-formatted TEXT to a numeric REAL by stripping '$' and ',' then CAST.",
+            "Step 3: SUM the numeric sale amounts grouped by category and category_name.",
+            "Step 4: Order ascending by total sales and return the bottom 5 categories using LIMIT 5."
+        ],
+        "Need_Visulization": true
+    },
+    {
+        "Question": "Does the store with the highest sales also have the most transactions?",
+        "Answer": "Yes. The top-selling store\u2014**Hy-Vee #3 / BDI / Des Moines**\u2014also has the **most transactions**.\n\n- **Total sales:** about **$47.12 million**\n- **Number of transactions:** **111,705**\n\nSo the store leading in sales is also the busiest by transaction count.",
+        "SQL_Response": [
+            [
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                47121172.41,
+                111705,
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                47121172.41,
+                111705,
+                1
+            ]
+        ],
+        "SQL_Query": "WITH store_rollup AS (\n  SELECT\n    fs.store_number,\n    SUM(CAST(REPLACE(fs.sale_amount, '$', '') AS REAL)) AS total_sales_amount,\n    COUNT(DISTINCT fs.invoice_number) AS transaction_count\n  FROM Fact_Sales fs\n  GROUP BY fs.store_number\n),\nranked AS (\n  SELECT\n    sr.store_number,\n    sr.total_sales_amount,\n    sr.transaction_count,\n    RANK() OVER (ORDER BY sr.total_sales_amount DESC) AS sales_rank,\n    RANK() OVER (ORDER BY sr.transaction_count DESC) AS transactions_rank\n  FROM store_rollup sr\n),\nhighest_sales AS (\n  SELECT store_number, total_sales_amount, transaction_count\n  FROM ranked\n  WHERE sales_rank = 1\n),\nmost_transactions AS (\n  SELECT store_number, total_sales_amount, transaction_count\n  FROM ranked\n  WHERE transactions_rank = 1\n)\nSELECT\n  hs.store_number AS highest_sales_store_number,\n  ds_hs.store_name AS highest_sales_store_name,\n  hs.total_sales_amount AS highest_sales_total_sales_amount,\n  hs.transaction_count AS highest_sales_transaction_count,\n  mt.store_number AS most_transactions_store_number,\n  ds_mt.store_name AS most_transactions_store_name,\n  mt.total_sales_amount AS most_transactions_total_sales_amount,\n  mt.transaction_count AS most_transactions_transaction_count,\n  CASE WHEN hs.store_number = mt.store_number THEN 1 ELSE 0 END AS highest_sales_store_also_has_most_transactions\nFROM highest_sales hs\nJOIN Dim_Store ds_hs ON ds_hs.store_number = hs.store_number\nCROSS JOIN most_transactions mt\nJOIN Dim_Store ds_mt ON ds_mt.store_number = mt.store_number;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Store"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.store_number",
+            "Fact_Sales.sale_amount",
+            "Fact_Sales.invoice_number",
+            "Dim_Store.store_number",
+            "Dim_Store.store_name"
+        ],
+        "Logic": [
+            "Step 1: Aggregate Fact_Sales by store_number to compute (a) total_sales_amount as SUM of sale_amount after stripping '$' and casting to REAL, and (b) transaction_count as COUNT(DISTINCT invoice_number).",
+            "Step 2: Rank stores by total_sales_amount and by transaction_count using window function RANK() to allow for ties.",
+            "Step 3: Select the store(s) with sales_rank = 1 as highest_sales and store(s) with transactions_rank = 1 as most_transactions.",
+            "Step 4: Compare the top store_numbers and output a boolean flag (1/0) indicating whether the highest-sales store is also the most-transactions store, including store names for readability."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "Which Store has benifited the most from Chiristmas season (Nov-Dec) in terms of sales amount?",
+        "Answer": "**Hy-Vee #3 / BDI / Des Moines** benefited the most from the Christmas season (November\u2013December) in terms of sales amount, with **$6,571,020.66** in sales during that period.",
+        "SQL_Response": [
+            [
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                6571020.66
+            ]
+        ],
+        "SQL_Query": "WITH sales_enriched AS (\n  SELECT\n    fs.store_number,\n    ds.store_name,\n    CAST(REPLACE(fs.sale_amount, '$', '') AS REAL) AS sale_amount_num,\n    CAST(SUBSTR(fs.Date, 1, 2) AS INTEGER) AS sale_month\n  FROM Fact_Sales fs\n  JOIN Dim_Store ds\n    ON ds.store_number = fs.store_number\n  WHERE fs.sale_amount IS NOT NULL\n    AND fs.Date IS NOT NULL\n    AND LENGTH(fs.Date) >= 10\n),\nnov_dec_sales_by_store AS (\n  SELECT\n    store_number,\n    store_name,\n    SUM(sale_amount_num) AS nov_dec_sales_amount\n  FROM sales_enriched\n  WHERE sale_month IN (11, 12)\n  GROUP BY store_number, store_name\n)\nSELECT\n  store_number,\n  store_name,\n  nov_dec_sales_amount\nFROM nov_dec_sales_by_store\nORDER BY nov_dec_sales_amount DESC\nLIMIT 1;",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Store"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.store_number",
+            "Fact_Sales.sale_amount",
+            "Fact_Sales.Date",
+            "Dim_Store.store_number",
+            "Dim_Store.store_name"
+        ],
+        "Logic": [
+            "Step 1: Join Fact_Sales to Dim_Store to get store_name for each store_number.",
+            "Step 2: Parse Fact_Sales.sale_amount from currency text (e.g., '$104.58') into a numeric REAL using REPLACE + CAST so it can be summed.",
+            "Step 3: Extract the month from Fact_Sales.Date (stored as 'MM/DD/YYYY') using SUBSTR(Date,1,2) and CAST to INTEGER.",
+            "Step 4: Filter to November and December (months 11 and 12).",
+            "Step 5: Aggregate SUM(sale_amount_num) by store to compute total Nov-Dec sales amount per store.",
+            "Step 6: Order by the aggregated Nov-Dec sales amount descending and return the top store with LIMIT 1."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "Which county has the most number of stores and how does their average sales compare to other counties?",
+        "Answer": "**Polk County** has the most stores, with **229** locations.\n\nIn terms of sales, Polk\u2019s **average sales per store are about $1.38M**, which the results indicate is **above the overall average** across counties. That means Polk not only has the most stores, but its typical store also sells **more than the average store in other counties**.",
+        "SQL_Response": [
+            [
+                77,
+                "Polk",
+                229,
+                317088982.3,
+                1384668.04,
+                373532.53,
+                1011135.51,
+                "Above overall avg"
+            ]
+        ],
+        "SQL_Query": "WITH store_counts AS (\n  SELECT\n    s.county_number,\n    s.county,\n    COUNT(DISTINCT s.store_number) AS store_count\n  FROM Dim_Store s\n  GROUP BY s.county_number, s.county\n),\ncounty_sales AS (\n  SELECT\n    s.county_number,\n    s.county,\n    COUNT(DISTINCT s.store_number) AS store_count,\n    SUM(CAST(REPLACE(REPLACE(f.sale_amount, '$', ''), ',', '') AS REAL)) AS total_sales,\n    SUM(CAST(REPLACE(REPLACE(f.sale_amount, '$', ''), ',', '') AS REAL))\n      / NULLIF(COUNT(DISTINCT s.store_number), 0) AS avg_sales_per_store\n  FROM Fact_Sales f\n  JOIN Dim_Store s\n    ON s.store_number = f.store_number\n  GROUP BY s.county_number, s.county\n),\nranked AS (\n  SELECT\n    cs.county_number,\n    cs.county,\n    cs.store_count,\n    cs.total_sales,\n    cs.avg_sales_per_store,\n    RANK() OVER (ORDER BY cs.store_count DESC) AS store_count_rank,\n    AVG(cs.avg_sales_per_store) OVER () AS overall_avg_sales_per_store\n  FROM county_sales cs\n)\nSELECT\n  r.county_number,\n  r.county,\n  r.store_count,\n  ROUND(r.total_sales, 2) AS total_sales,\n  ROUND(r.avg_sales_per_store, 2) AS avg_sales_per_store,\n  ROUND(r.overall_avg_sales_per_store, 2) AS overall_avg_sales_per_store,\n  ROUND(r.avg_sales_per_store - r.overall_avg_sales_per_store, 2) AS avg_sales_per_store_vs_overall,\n  CASE\n    WHEN r.avg_sales_per_store > r.overall_avg_sales_per_store THEN 'Above overall avg'\n    WHEN r.avg_sales_per_store < r.overall_avg_sales_per_store THEN 'Below overall avg'\n    ELSE 'At overall avg'\n  END AS comparison_to_other_counties\nFROM ranked r\nWHERE r.store_count_rank = 1\nORDER BY r.store_count DESC, r.county ASC;",
+        "Tables_Used": [
+            "Dim_Store",
+            "Fact_Sales"
+        ],
+        "Columns_Used": [
+            "Dim_Store.store_number",
+            "Dim_Store.county_number",
+            "Dim_Store.county",
+            "Fact_Sales.store_number",
+            "Fact_Sales.sale_amount"
+        ],
+        "Logic": [
+            "Step 1: Aggregate sales to county level by joining Fact_Sales to Dim_Store on store_number.",
+            "Step 2: Compute store_count as COUNT(DISTINCT store_number) per county and total_sales as SUM(sale_amount) after stripping '$' and ',' and casting to REAL.",
+            "Step 3: Compute avg_sales_per_store = total_sales / store_count (NULL-safe via NULLIF).",
+            "Step 4: Rank counties by store_count descending using a window RANK() to identify the county/county-ties with the most stores.",
+            "Step 5: Compute overall average of avg_sales_per_store across all counties via AVG(...) OVER ().",
+            "Step 6: Filter to store_count_rank = 1 and output the county plus comparison vs overall average."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "On which date most transactions occur and how does the sales amount on that date compare to the average daily sales?",
+        "Answer": "Most transactions occur on **12/29/2014**, with **15,988 transactions**.\n\nOn that date, total sales were **$2,029,687.78**. The **average daily sales** are **$1,056,320.33**, so **12/29/2014** was **$973,367.45 higher than average**\u2014about **1.92\u00d7 (92%) above** the typical day.",
+        "SQL_Response": [
+            [
+                "12/29/2014",
+                15988,
+                2029687.78,
+                1056320.3311240028,
+                973367.4488759972,
+                1.9214699558421473
+            ]
+        ],
+        "SQL_Query": "WITH daily AS (\n  SELECT\n    fs.Date AS sales_date,\n    COUNT(DISTINCT fs.invoice_number) AS transactions,\n    SUM(CAST(REPLACE(REPLACE(fs.sale_amount, '$', ''), ',', '') AS REAL)) AS total_sales_amount\n  FROM Fact_Sales fs\n  GROUP BY fs.Date\n),\nmax_txn AS (\n  SELECT\n    d.sales_date,\n    d.transactions,\n    d.total_sales_amount\n  FROM daily d\n  WHERE d.transactions = (SELECT MAX(transactions) FROM daily)\n),\navg_daily AS (\n  SELECT AVG(d.total_sales_amount) AS avg_daily_sales_amount\n  FROM daily d\n)\nSELECT\n  m.sales_date,\n  m.transactions,\n  m.total_sales_amount,\n  a.avg_daily_sales_amount,\n  (m.total_sales_amount - a.avg_daily_sales_amount) AS diff_from_avg,\n  CASE\n    WHEN a.avg_daily_sales_amount = 0 THEN NULL\n    ELSE (m.total_sales_amount / a.avg_daily_sales_amount)\n  END AS ratio_to_avg\nFROM max_txn m\nCROSS JOIN avg_daily a\nORDER BY m.sales_date;\n",
+        "Tables_Used": [
+            "Fact_Sales"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.Date",
+            "Fact_Sales.invoice_number",
+            "Fact_Sales.sale_amount"
+        ],
+        "Logic": [
+            "Step 1: Aggregate Fact_Sales by Date to compute (a) distinct invoice count as transactions and (b) total daily sales amount (sale_amount parsed from currency text to REAL).",
+            "Step 2: Identify the date(s) with the maximum number of transactions by filtering daily rows to those matching MAX(transactions).",
+            "Step 3: Compute the average daily sales amount across all dates from the daily aggregate.",
+            "Step 4: Combine max-transaction date row(s) with the overall average via CROSS JOIN and compute difference and ratio for comparison."
+        ],
+        "Need_Visulization": false
+    },
+    {
+        "Question": "Year Wise what was the total volumen sold in Liters and what kind of trend does it show?",
+        "Answer": "Here\u2019s the year-by-year total volume sold (in liters), and what the trend looks like:\n\n- **2012:** **18,727,783.12 L** *(starting point)*\n- **2013:** **18,552,218.22 L** \u2014 **down** about **0.94%** from 2012  \n- **2014:** **19,140,508.58 L** \u2014 **up** about **3.17%** from 2013  \n- **2015:** **19,598,071.14 L** \u2014 **up** about **2.39%** from 2014  \n- **2016:** **13,952,566.68 L** \u2014 **down sharply** about **28.81%** from 2015  \n- **2017:** **3,668,520.92 L** \u2014 **down dramatically** about **73.71%** from 2016  \n\n### Trend summary\n- **2012\u20132015:** Sales were **fairly stable and gradually increasing**, peaking in **2015** at about **19.6 million liters**.\n- **2016\u20132017:** There\u2019s a **major decline**, first a big drop in **2016**, followed by an even steeper fall in **2017**.\n\nOverall, the trend shows **moderate growth up to 2015**, then a **severe downturn over the next two years**.",
+        "SQL_Response": [
+            [
+                2012,
+                18727783.12,
+                null,
+                null,
+                null,
+                "N/A (first year)"
+            ],
+            [
+                2013,
+                18552218.22,
+                18727783.12,
+                -175564.90000000224,
+                -0.94,
+                "Down"
+            ],
+            [
+                2014,
+                19140508.58,
+                18552218.22,
+                588290.3599999994,
+                3.17,
+                "Up"
+            ],
+            [
+                2015,
+                19598071.14,
+                19140508.58,
+                457562.5600000024,
+                2.39,
+                "Up"
+            ],
+            [
+                2016,
+                13952566.68,
+                19598071.14,
+                -5645504.460000001,
+                -28.81,
+                "Down"
+            ],
+            [
+                2017,
+                3668520.92,
+                13952566.68,
+                -10284045.76,
+                -73.71,
+                "Down"
+            ]
+        ],
+        "SQL_Query": "WITH base AS (\n  SELECT\n    CAST(substr(fs.Date, 7, 4) AS INTEGER) AS sales_year,\n    fs.volume_sold_liters AS volume_sold_liters\n  FROM Fact_Sales fs\n  WHERE fs.Date IS NOT NULL\n    AND length(fs.Date) >= 10\n    AND substr(fs.Date, 7, 4) GLOB '[0-9][0-9][0-9][0-9]'\n), yearly AS (\n  SELECT\n    b.sales_year,\n    SUM(b.volume_sold_liters) AS total_volume_sold_liters\n  FROM base b\n  GROUP BY b.sales_year\n), final AS (\n  SELECT\n    y.sales_year,\n    y.total_volume_sold_liters,\n    LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) AS prior_year_total_volume_sold_liters,\n    (y.total_volume_sold_liters - LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year)) AS yoy_change_liters,\n    CASE\n      WHEN LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) IS NULL THEN NULL\n      WHEN LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) = 0 THEN NULL\n      ELSE ROUND(\n        100.0 * (y.total_volume_sold_liters - LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year))\n        / LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year),\n        2\n      )\n    END AS yoy_change_pct,\n    CASE\n      WHEN LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) IS NULL THEN 'N/A (first year)'\n      WHEN y.total_volume_sold_liters > LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) THEN 'Up'\n      WHEN y.total_volume_sold_liters < LAG(y.total_volume_sold_liters) OVER (ORDER BY y.sales_year) THEN 'Down'\n      ELSE 'Flat'\n    END AS trend_vs_prior_year\n  FROM yearly y\n)\nSELECT\n  f.sales_year,\n  f.total_volume_sold_liters,\n  f.prior_year_total_volume_sold_liters,\n  f.yoy_change_liters,\n  f.yoy_change_pct,\n  f.trend_vs_prior_year\nFROM final f\nWHERE f.sales_year IS NOT NULL\nORDER BY f.sales_year;",
+        "Tables_Used": [
+            "Fact_Sales"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.Date",
+            "Fact_Sales.volume_sold_liters"
+        ],
+        "Logic": [
+            "Step 1: Read Fact_Sales and derive sales_year from the text Date in MM/DD/YYYY format using substr(Date, 7, 4), filtering out obviously invalid year strings via GLOB.",
+            "Step 2: Aggregate to year level by summing volume_sold_liters to get total_volume_sold_liters per sales_year.",
+            "Step 3: Compute year-over-year trend metrics using window function LAG over sales_year: prior year total, YoY absolute change (liters), YoY percent change, and a categorical trend label (Up/Down/Flat).",
+            "Step 4: Return results ordered by sales_year to show the trend over time."
+        ],
+        "Need_Visulization": true
+    },
+    {
+        "Question": "Differnce Between the Best and Worst Performing Store in terms of sales amount and Units Sold?",
+        "Answer": "Here\u2019s the difference between the best and worst performing stores:\n\n- **Sales amount:**  \n  - Best store: **Hy-Vee #3 / BDI / Des Moines** with **$47,121,172.41**  \n  - Worst store: **Best Case Wines** with **$78.00**  \n  - **Difference:** **$47,121,094.41** (the top store sold about **$47.1M** more)\n\n- **Units sold:**  \n  - Best store: **Hy-Vee #3 / BDI / Des Moines** with **2,754,286 units**  \n  - Worst store: **Best Case Wines** with **2 units**  \n  - **Difference:** **2,754,284 units** (the top store sold **2.75M** more units)",
+        "SQL_Response": [
+            [
+                "sales_amount",
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                47121172.41,
+                9929,
+                "Best Case Wines",
+                78.0,
+                47121094.41
+            ],
+            [
+                "units_sold",
+                2633,
+                "Hy-Vee #3 / BDI / Des Moines",
+                2754286.0,
+                9929,
+                "Best Case Wines",
+                2.0,
+                2754284
+            ]
+        ],
+        "SQL_Query": "WITH store_perf AS (\n  SELECT\n    fs.store_number,\n    SUM(CAST(REPLACE(fs.sale_amount, '$', '') AS REAL)) AS total_sales_amount,\n    SUM(fs.bottles_sold) AS total_units_sold\n  FROM Fact_Sales fs\n  GROUP BY fs.store_number\n), ranked AS (\n  SELECT\n    sp.store_number,\n    sp.total_sales_amount,\n    sp.total_units_sold,\n    RANK() OVER (ORDER BY sp.total_sales_amount DESC) AS sales_rank_desc,\n    RANK() OVER (ORDER BY sp.total_sales_amount ASC) AS sales_rank_asc,\n    RANK() OVER (ORDER BY sp.total_units_sold DESC) AS units_rank_desc,\n    RANK() OVER (ORDER BY sp.total_units_sold ASC) AS units_rank_asc\n  FROM store_perf sp\n)\nSELECT\n  'sales_amount' AS metric,\n  best.store_number AS best_store_number,\n  ds_best.store_name AS best_store_name,\n  best.total_sales_amount AS best_value,\n  worst.store_number AS worst_store_number,\n  ds_worst.store_name AS worst_store_name,\n  worst.total_sales_amount AS worst_value,\n  (best.total_sales_amount - worst.total_sales_amount) AS difference\nFROM (SELECT * FROM ranked WHERE sales_rank_desc = 1 ORDER BY store_number LIMIT 1) best\nCROSS JOIN (SELECT * FROM ranked WHERE sales_rank_asc = 1 ORDER BY store_number LIMIT 1) worst\nLEFT JOIN Dim_Store ds_best ON ds_best.store_number = best.store_number\nLEFT JOIN Dim_Store ds_worst ON ds_worst.store_number = worst.store_number\n\nUNION ALL\n\nSELECT\n  'units_sold' AS metric,\n  best.store_number AS best_store_number,\n  ds_best.store_name AS best_store_name,\n  CAST(best.total_units_sold AS REAL) AS best_value,\n  worst.store_number AS worst_store_number,\n  ds_worst.store_name AS worst_store_name,\n  CAST(worst.total_units_sold AS REAL) AS worst_value,\n  (best.total_units_sold - worst.total_units_sold) AS difference\nFROM (SELECT * FROM ranked WHERE units_rank_desc = 1 ORDER BY store_number LIMIT 1) best\nCROSS JOIN (SELECT * FROM ranked WHERE units_rank_asc = 1 ORDER BY store_number LIMIT 1) worst\nLEFT JOIN Dim_Store ds_best ON ds_best.store_number = best.store_number\nLEFT JOIN Dim_Store ds_worst ON ds_worst.store_number = worst.store_number;\n",
+        "Tables_Used": [
+            "Fact_Sales",
+            "Dim_Store"
+        ],
+        "Columns_Used": [
+            "Fact_Sales.store_number",
+            "Fact_Sales.sale_amount",
+            "Fact_Sales.bottles_sold",
+            "Dim_Store.store_number",
+            "Dim_Store.store_name"
+        ],
+        "Logic": [
+            "Step 1: Aggregate Fact_Sales by store_number to compute total_sales_amount (sale_amount parsed from currency text to REAL) and total_units_sold (SUM of bottles_sold).",
+            "Step 2: Rank stores for each metric using window functions (RANK) in both ascending and descending order to identify best (rank 1 descending) and worst (rank 1 ascending).",
+            "Step 3: Select a single best and a single worst row per metric (tie-break by lowest store_number via ORDER BY ... LIMIT 1).",
+            "Step 4: Join each selected store to Dim_Store to fetch store_name.",
+            "Step 5: Output two rows (sales_amount and units_sold) and compute difference as best_value - worst_value."
+        ],
+        "Need_Visulization": false
+    }
+]

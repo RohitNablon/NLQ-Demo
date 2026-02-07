@@ -1,0 +1,229 @@
+/* Global Grid Background */
+.home-page {
+    height: 100vh;
+    width: 100vw;
+    background-color: #050505;
+    /* Deep black/blue */
+    color: #fff;
+    overflow-y: auto;
+    position: relative;
+    font-family: 'Jost', sans-serif;
+}
+
+.background-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.home-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.nablon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+}
+
+.nablon-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #fff;
+}
+
+.header-action-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-action-btn:hover {
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    margin-top: 80px;
+    margin-bottom: 60px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #fff;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.5);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Selection Cards */
+.flow-selection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.nablon-card {
+    background: #0f1012;
+    /* Slightly lighter than bg */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 40px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 320px;
+}
+
+.nablon-card:hover {
+    background: #141518;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.card-icon-wrapper {
+    color: #fff;
+    margin-bottom: 24px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+.card-description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    flex: 1;
+}
+
+.card-action {
+    margin-top: 32px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Connection Form Style (active state) */
+.connect-card {
+    background: #0f1012;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.card-back-btn {
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.card-back-btn:hover {
+    color: #fff;
+}
+
+.input,
+.form-select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.input:focus,
+.form-select:focus {
+    border-color: var(--accent);
+    outline: none;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.connect-btn {
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    color: #000;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    margin-top: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.connect-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

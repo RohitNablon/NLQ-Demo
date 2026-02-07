@@ -1,0 +1,245 @@
+.er-diagram-tab {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    overflow: hidden;
+}
+
+.er-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.er-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.er-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.er-control-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all var(--transition-normal);
+}
+
+.er-control-btn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+
+/* Canvas */
+.er-canvas {
+    flex: 1;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: auto;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.er-svg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.er-line {
+    stroke: var(--text-tertiary);
+    /* Subtle gray */
+    stroke-width: 1.5px;
+    fill: none;
+}
+
+.er-line:hover {
+    stroke: var(--accent);
+    stroke-width: 2px;
+    z-index: 10;
+}
+
+.er-diagram-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1000px;
+}
+
+/* Entity Cards */
+.er-entities-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.er-column {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+
+.entity-card {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    width: 220px;
+    max-height: 350px;
+    overflow-y: auto;
+    transition: all var(--transition-normal);
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.entity-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+}
+
+.entity-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+}
+
+.entity-attributes {
+    padding: 8px;
+}
+
+.entity-attribute {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.entity-attribute:last-child {
+    border-bottom: none;
+}
+
+.attr-key {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 4px;
+    border-radius: 4px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.attr-key.pk {
+    background: #fbbf24;
+    color: #000;
+}
+
+.attr-key.fk {
+    background: #10b981;
+    color: #fff;
+}
+
+.attr-name {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.attr-type {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Legend */
+.er-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(26, 26, 26, 0.8);
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: 24px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.pk {
+    background: #fbbf24;
+}
+
+.legend-color.fk {
+    background: #10b981;
+}
+
+.relationship-line-sample {
+    width: 20px;
+    height: 2px;
+    background: var(--accent);
+    position: relative;
+}
+
+.relationship-line-sample::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    filter: blur(2px);
+}
+
+/* Relationship lines - simplified visual */
+.relationship-hint {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
