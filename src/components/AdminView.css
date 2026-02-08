@@ -790,6 +790,95 @@
     flex: 1;
 }
 
+.panel-section {
+    margin-bottom: 24px;
+}
+
+.panel-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.panel-text {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.column-list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.5fr;
+    padding: 0 14px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+}
+
+.column-list-header span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.column-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.column-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.5fr;
+    align-items: center;
+    padding: 16px 14px;
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 0;
+    transition: all 0.2s;
+}
+
+.column-item:last-child {
+    border-bottom: none;
+}
+
+.column-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.col-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.col-type {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: 'Fira Code', monospace;
+}
+
+.col-keys {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
 .side-panel-header h3 {
     margin: 0;
     font-size: 1.5rem;
@@ -915,20 +1004,20 @@
     gap: 8px;
 }
 
-.k-badge {
+.key-badge {
     padding: 2px 8px;
     border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 800;
 }
 
-.k-badge.pk {
+.key-badge.pk {
     background: rgba(0, 123, 255, 0.2);
     color: #4da3ff;
     border: 1px solid rgba(0, 123, 255, 0.4);
 }
 
-.k-badge.fk {
+.key-badge.fk {
     background: rgba(255, 193, 7, 0.2);
     color: #ffca2c;
     border: 1px solid rgba(255, 193, 7, 0.4);
@@ -1112,6 +1201,165 @@
     margin-top: 32px;
 }
 
+/* Use Case Selection */
+.use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.use-case-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.use-case-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.use-case-card.active {
+    border-color: var(--accent);
+    background: rgba(6, 182, 212, 0.05);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.uc-icon-box {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+}
+
+.use-case-card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.use-case-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* AI Model Config */
+.model-config-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.config-section {
+    margin-bottom: 2rem;
+}
+
+.config-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+.slider-group {
+    margin-top: 1rem;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* Testing Console */
+.testing-console {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    height: 500px;
+}
+
+.test-panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+}
+
+.test-output {
+    flex: 1;
+    padding: 1rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    overflow-y: auto;
+    background: #0d0d0d;
+}
+
+.sql-output {
+    color: #a5b4fc;
+}
+
+.test-input-area {
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.75rem;
+}
+
+.test-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    color: white;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge.pass {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.status-badge.fail {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--error);
+}
+
 /* JSON View Layout */
 .json-view-container {
     display: flex;
@@ -1218,4 +1466,39 @@
     height: 100%;
     color: var(--text-muted);
     gap: 16px;
+}
+
+/* Editable Glossary */
+.glossary-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.glossary-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.glossary-input:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.glossary-input:focus {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.1);
+}
+
+.glossary-input.full-width {
+    min-width: 300px;
 }

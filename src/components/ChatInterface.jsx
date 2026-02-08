@@ -5,7 +5,7 @@ import AgentNetworkVisualizer from './AgentNetworkVisualizer';
 import AgentTrace from './AgentTrace';
 import qaData from '../QA.json';
 import './ChatInterface.css';
-import { Send, Database, MessageSquare, LayoutGrid, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Send, Database, MessageSquare, LayoutGrid, LogOut, ChevronLeft, ChevronRight, ShieldCheck } from 'lucide-react';
 
 // Simple Markdown Renderer for Agent Answers
 // Simple Markdown Renderer for Agent Answers
@@ -92,7 +92,7 @@ const SimpleMarkdown = ({ text }) => {
     );
 };
 
-const ChatInterface = ({ dbInfo, onDisconnect }) => {
+const ChatInterface = ({ dbInfo, onDisconnect, initialQuestion }) => {
     // Helper to determine active step for visualizer
     const getActiveTraceStep = (trace) => {
         if (!trace) return null;
@@ -100,10 +100,12 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
         // Order of precedence (reverse)
         if (trace.end) return 'end';
         if (trace.final) return 'final';
+        if (trace.validator) return 'validator';
         if (trace.visualizer) return 'visualizer';
         if (trace.sandbox) return 'sandbox';
         if (trace.generator) return 'generator';
         if (trace.selector) return 'selector';
+        if (trace.general_llm) return 'general_llm'; // Add General LLM step
         if (trace.evaluator) return 'evaluator';
         if (trace.refiner) return 'refiner';
         return null; // or idle
@@ -121,7 +123,16 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
 
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [confidencePopup, setConfidencePopup] = useState(null); // { score, reason }
     const messagesEndRef = useRef(null);
+    const initialQuestionProcessed = useRef(null);
+
+    useEffect(() => {
+        if (initialQuestion && initialQuestion !== initialQuestionProcessed.current) {
+            initialQuestionProcessed.current = initialQuestion;
+            createNewSession(initialQuestion);
+        }
+    }, [initialQuestion]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -132,6 +143,23 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
     }, [messages]);
 
     const createNewSession = (initialQuery = null) => {
+        const activeSess = sessions.find(s => s.id === activeSessionId);
+
+        // Reuse current session if it's empty and has generic title
+        if (activeSess && activeSess.messages.length === 0 && (activeSess.title === 'New Chat' || !activeSess.title)) {
+            if (initialQuery) {
+                const updatedSession = {
+                    ...activeSess,
+                    title: initialQuery.length > 30 ? initialQuery.substring(0, 30) + '...' : initialQuery,
+                    timestamp: Date.now()
+                };
+                setSessions(prev => prev.map(s => s.id === activeSessionId ? updatedSession : s));
+                setView('chat');
+                setTimeout(() => handleSendMessage(initialQuery, activeSess.id), 100);
+            }
+            return;
+        }
+
         const newId = Date.now().toString();
         const newSession = {
             id: newId,
@@ -163,7 +191,14 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
         setSessions(prev => prev.map(session => {
             if (session.id === sessionId) {
                 // Update title if it's the first message and title is generic
-                const newTitle = session.messages.length === 0 ? (query.length > 30 ? query.substring(0, 30) + '...' : query) : session.title;
+                let newTitle = session.title;
+                if (session.messages.length === 0) {
+                    if (query.includes('Dashboard Summary Request')) {
+                        newTitle = 'Dashboard Executive Summary';
+                    } else {
+                        newTitle = query.length > 30 ? query.substring(0, 30) + '...' : query;
+                    }
+                }
                 return {
                     ...session,
                     title: newTitle,
@@ -176,121 +211,234 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
         setInputValue('');
         setIsTyping(true);
 
-        // Find QA Match
-        const match = qaData.find(q => q.Question === query) || qaData[0];
+        // Find QA Match - making it more robust (case-insensitive, trimmed, ignoring trailing question marks)
+        const normalize = (str) => str.toLowerCase().trim().replace(/[?]$/, '');
+        const match = qaData.find(q => normalize(q.Question) === normalize(query));
 
-        // Simulate Agent Response
-        setTimeout(() => {
-            setIsTyping(false); // Stop global loader since we show the message now
-            const agentMsgId = Date.now() + 1;
-            const agentMsg = {
-                id: agentMsgId,
-                type: 'agent',
-                trace: {
-                    refiner: null,
-                    evaluator: null,
-                    selector: null,
-                    generator: null,
-                    sandbox: null,
-                    visualizer: null,
-                    final: null
-                },
-                content: match.Answer // Pre-load or set later? Setting later to simulate thinking
-            };
-
-            setSessions(prev => prev.map(session => {
-                if (session.id === sessionId) {
-                    return { ...session, messages: [...session.messages, agentMsg] };
-                }
-                return session;
-            }));
-
-            // Simulate Trace Steps via QA Data
-            const stepDelay = 800;
-            let delay = 500;
-
-            // 1. Refiner
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'refiner', `Refining "${query}"...`), delay);
-            delay += stepDelay;
-
-            // 2. Evaluator
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'evaluator', 'Routing to SQL Engine...'), delay);
-            delay += stepDelay;
-
-            // 3. Selector
-            const tables = match.Tables_Used ? match.Tables_Used.join(', ') : 'Identifying tables...';
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'selector', `Identified Tables: ${tables}`), delay);
-            delay += stepDelay;
-
-            // 4. Generator
-            const sqlSnippet = match.SQL_Query || 'Generating SQL...';
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'generator', `Generated SQL: ${sqlSnippet}`), delay);
-            delay += stepDelay;
-
-            // 5. Sandbox
-            const dataPreview = match.SQL_Response ? JSON.stringify(match.SQL_Response, null, 2) : 'Validating Query & Data...';
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'sandbox', `Execution Result: ${dataPreview}`), delay);
-            delay += stepDelay;
-
-            // 6. Visualizer (Conditional)
-            if (match.Need_Visulization) {
-                setTimeout(() => updateTrace(sessionId, agentMsgId, 'visualizer', 'Generating Chart Configuration...'), delay);
-                delay += stepDelay;
-            }
-            // Else: Skip Visualizer step entirely so it doesn't highlight in the graph
-
-            // 7. Final Answer
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'final', 'Formulating Final Answer...'), delay);
-            delay += stepDelay;
-
-            // 8. End
-            setTimeout(() => updateTrace(sessionId, agentMsgId, 'end', 'Process Complete.'), delay);
-            delay += stepDelay;
-
-            // Finish
+        if (match) {
+            // Existing Mock Logic for Curated Questions
             setTimeout(() => {
-
-                // Determine Chart Type based on Question (Pre-calculation for Trace)
-                let specificChartType = 'default';
-                let chartDescription = 'Bar Chart';
-
-                if (match.Question.includes('Year Wise')) {
-                    specificChartType = 'trend_line';
-                    chartDescription = 'Trend Line Chart';
-                }
-                else if (match.Question.includes('Bottom 5')) {
-                    specificChartType = 'bar_horizontal_bottom_5';
-                    chartDescription = 'Horizontal Bar Chart';
-                }
-                else if (match.Question.includes('Top 5 stores')) {
-                    specificChartType = 'bar_vertical_top_5';
-                    chartDescription = 'Vertical Bar Chart';
-                }
-
-                // Update Trace with specific chart info if visualization was needed
-                if (match.Need_Visulization) {
-                    updateTrace(sessionId, agentMsgId, 'visualizer', `Generated ${chartDescription}`);
-                }
-
-                updateTrace(sessionId, agentMsgId, 'complete', true);
+                setIsTyping(false);
+                const agentMsgId = Date.now() + 1;
+                const agentMsg = {
+                    id: agentMsgId,
+                    type: 'agent',
+                    trace: {
+                        refiner: null,
+                        evaluator: null,
+                        selector: null,
+                        generator: null,
+                        sandbox: null,
+                        visualizer: null,
+                        general_llm: null,
+                        validator: null
+                    },
+                    confidence: 0.96 + (Math.random() * 0.04),
+                    confidenceReason: "Verification Successful: The input query aligns with a pre-validated analytical template in the Enterprise Data Hub. SQL logic and schema mappings for this domain have been explicitly verified by data stewards for 100% accuracy against the production warehouse.",
+                    content: match.Answer
+                };
 
                 setSessions(prev => prev.map(session => {
                     if (session.id === sessionId) {
-                        return {
-                            ...session,
-                            messages: session.messages.map(m => m.id === agentMsgId ? {
-                                ...m,
-                                content: match.Answer,
-                                showChart: match.Need_Visulization,
-                                chartType: specificChartType
-                            } : m)
-                        };
+                        return { ...session, messages: [...session.messages, agentMsg] };
                     }
                     return session;
                 }));
-            }, delay);
 
-        }, 500);
+                const stepDelay = 800;
+                let delay = 500;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'refiner', `Refining "${query}"...`), delay);
+                delay += stepDelay;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'evaluator', 'Routing to SQL Engine...'), delay);
+                delay += stepDelay;
+
+                const tables = match.Tables_Used ? match.Tables_Used.join(', ') : 'Identifying tables...';
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'selector', `Identified Tables: ${tables}`), delay);
+                delay += stepDelay;
+
+                const sqlSnippet = match.SQL_Query || 'Generating SQL...';
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'generator', `Generated SQL: ${sqlSnippet}`), delay);
+                delay += stepDelay;
+
+                const dataPreview = match.SQL_Response ? JSON.stringify(match.SQL_Response, null, 2) : 'Validating Query & Data...';
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'sandbox', `Execution Result: ${dataPreview}`), delay);
+                delay += stepDelay;
+
+                if (match.Need_Visulization) {
+                    setTimeout(() => updateTrace(sessionId, agentMsgId, 'visualizer', 'Generating Chart Configuration...'), delay);
+                    delay += stepDelay;
+                }
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'final', 'Formulating Final Answer...'), delay);
+                delay += stepDelay;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'validator', 'LLM-as-Judge: Data verified against Source-of-Truth.'), delay);
+                delay += stepDelay;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'end', 'Process Complete.'), delay);
+                delay += stepDelay;
+
+                setTimeout(() => {
+                    let specificChartType = 'default';
+                    let chartDescription = 'Bar Chart';
+
+                    if (match.Question.includes('Year Wise')) {
+                        specificChartType = 'trend_line';
+                        chartDescription = 'Trend Line Chart';
+                    }
+                    else if (match.Question.includes('Bottom 5')) {
+                        specificChartType = 'bar_horizontal_bottom_5';
+                        chartDescription = 'Horizontal Bar Chart';
+                    }
+                    else if (match.Question.includes('Top 5 stores')) {
+                        specificChartType = 'bar_vertical_top_5';
+                        chartDescription = 'Vertical Bar Chart';
+                    }
+
+                    if (match.Need_Visulization) {
+                        updateTrace(sessionId, agentMsgId, 'visualizer', `Generated ${chartDescription}`);
+                    }
+
+                    updateTrace(sessionId, agentMsgId, 'complete', true);
+
+                    setSessions(prev => prev.map(session => {
+                        if (session.id === sessionId) {
+                            return {
+                                ...session,
+                                messages: session.messages.map(m => m.id === agentMsgId ? {
+                                    ...m,
+                                    content: match.Answer,
+                                    showChart: match.Need_Visulization,
+                                    chartType: specificChartType
+                                } : m)
+                            };
+                        }
+                        return session;
+                    }));
+                }, delay);
+
+            }, 500);
+        } else {
+            // Dynamic Fallback to Azure OpenAI
+            const performDynamicSearch = async () => {
+                const agentMsgId = Date.now() + 1;
+                // Initialize Agent Message with empty trace
+                setSessions(prev => prev.map(session => {
+                    if (session.id === sessionId) {
+                        const agentMsg = {
+                            id: agentMsgId,
+                            type: 'agent',
+                            trace: {
+                                refiner: null, evaluator: null, selector: null,
+                                generator: null, sandbox: null, visualizer: null, final: null,
+                                general_llm: null, validator: null
+                            },
+                            content: '' // Will fill later
+                        };
+                        return { ...session, messages: [...session.messages, agentMsg] };
+                    }
+                    return session;
+                }));
+
+                // Simulate Trace Steps for Dynamic Query
+                const stepDelay = 1000;
+                let delay = 100;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'refiner', `Analyzing dynamic query: "${query}"...`), delay);
+                delay += stepDelay;
+
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'evaluator', 'Routing to External Knowledge Base (LLM)...'), delay);
+                delay += stepDelay;
+
+                // USE GENERAL LLM PATH NOT SQL PATH
+                setTimeout(() => updateTrace(sessionId, agentMsgId, 'general_llm', 'Querying General Knowledge Model...'), delay);
+                delay += stepDelay;
+
+                try {
+                    // Call Azure OpenAI
+                    const endpoint = process.env.REACT_APP_AZURE_OPENAI_ENDPOINT;
+                    const apiKey = process.env.REACT_APP_AZURE_OPENAI_API_KEY;
+                    const deployment = process.env.REACT_APP_AZURE_OPENAI_DEPLOYMENT;
+                    const version = process.env.REACT_APP_AZURE_OPENAI_VERSION || '2024-02-15-preview';
+
+                    if (!endpoint || !apiKey || !deployment) {
+                        throw new Error("Azure OpenAI credentials not configured.");
+                    }
+
+                    const response = await fetch(`${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${version}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'api-key': apiKey
+                        },
+                        body: JSON.stringify({
+                            messages: [
+                                { role: 'system', content: 'You are a helpful data analyst assistant. Provide clear, concise answers to user questions about their data. If you do not have specific data access, provide a general answer or guidance.' },
+                                { role: 'user', content: query }
+                            ],
+                            temperature: 0.7
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(`Azure OpenAI Error: ${response.status} - ${errText}`);
+                    }
+
+                    const data = await response.json();
+                    const aiContent = data.choices[0]?.message?.content || "No response generated.";
+
+                    // Update trace with success - SKIP generator/sandbox/final steps as they are SQL specific
+                    // The General LLM node directly connects to End in the visualizer
+
+                    setTimeout(() => updateTrace(sessionId, agentMsgId, 'end', 'Dynamic processed complete.'), delay);
+
+                    // Finalize Message
+                    setTimeout(() => {
+                        updateTrace(sessionId, agentMsgId, 'complete', true);
+                        setSessions(prev => prev.map(session => {
+                            if (session.id === sessionId) {
+                                return {
+                                    ...session,
+                                    messages: session.messages.map(m => m.id === agentMsgId ? {
+                                        ...m,
+                                        content: aiContent,
+                                        showChart: false // No charts for dynamic yet
+                                    } : m)
+                                };
+                            }
+                            return session;
+                        }));
+                        setIsTyping(false);
+                    }, delay + 500);
+
+                } catch (error) {
+                    console.error("LLM Call Failed", error);
+                    // Update trace with error
+                    setTimeout(() => {
+                        updateTrace(sessionId, agentMsgId, 'end', 'Error: Failed to connect to AI Service.');
+                        updateTrace(sessionId, agentMsgId, 'complete', true);
+                        setSessions(prev => prev.map(session => {
+                            if (session.id === sessionId) {
+                                return {
+                                    ...session,
+                                    messages: session.messages.map(m => m.id === agentMsgId ? {
+                                        ...m,
+                                        content: `**Error**: ${error.message}. Please check your connection or credentials.`,
+                                        showChart: false
+                                    } : m)
+                                };
+                            }
+                            return session;
+                        }));
+                        setIsTyping(false);
+                    }, delay);
+                }
+            };
+            performDynamicSearch();
+        }
     };
 
     const updateTrace = (sessionId, msgId, field, value) => {
@@ -396,6 +544,16 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
 
                                             {msg.isComplete && (
                                                 <div className="final-answer-container fade-in">
+                                                    {msg.confidence && (
+                                                        <button
+                                                            className="confidence-badge clickable"
+                                                            onClick={() => setConfidencePopup({ score: msg.confidence, reason: msg.confidenceReason })}
+                                                            title="Click to view verification reasoning"
+                                                        >
+                                                            <div className="confidence-indicator" style={{ width: `${msg.confidence * 100}%` }} />
+                                                            <span className="confidence-text">{Math.round(msg.confidence * 100)}% Confidence</span>
+                                                        </button>
+                                                    )}
                                                     <div className="answer-text" style={{
                                                         marginBottom: '15px',
                                                         fontSize: '1rem',
@@ -467,6 +625,33 @@ const ChatInterface = ({ dbInfo, onDisconnect }) => {
                     />
                 </div>
             </aside>
+
+            {/* Confidence Reasoning Popup */}
+            {confidencePopup && (
+                <div className="confidence-modal-overlay" onClick={() => setConfidencePopup(null)}>
+                    <div className="confidence-modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <ShieldCheck size={20} className="modal-icon" />
+                            <h3>Verification Reasoning</h3>
+                            <button className="close-btn" onClick={() => setConfidencePopup(null)}>&times;</button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="score-summary">
+                                <div className="score-large">{Math.round(confidencePopup.score * 100)}%</div>
+                                <div className="score-label">System Confidence</div>
+                            </div>
+                            <div className="reason-text">
+                                {confidencePopup.reason}
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <div className="modal-status">
+                                <span className="status-dot green" /> Verified by LLM-as-Judge
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

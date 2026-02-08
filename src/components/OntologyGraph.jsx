@@ -19,9 +19,9 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
 
             // Tune forces after mount
             if (fgRef.current) {
-                fgRef.current.d3Force('charge').strength(-200);
-                fgRef.current.d3Force('link').distance(40).strength(node => node.strength || 0.7);
-                fgRef.current.d3Force('center').strength(0.8);
+                fgRef.current.d3Force('charge').strength(-400); // Much stronger repulsion
+                fgRef.current.d3Force('link').distance(120).strength(node => node.strength || 0.4); // Longer links
+                fgRef.current.d3Force('center').strength(0.5);
             }
         }, 100);
         return () => clearTimeout(timer);
@@ -39,7 +39,7 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                 id: table.table_name,
                 group: 'table',
                 label: table.table_name,
-                size: 28, // Slightly larger
+                size: 32, // Larger
                 details: `${table.columns?.length || 0} Columns`,
                 fullData: table
             });
@@ -58,7 +58,7 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                         links.push({
                             source: fact.table_name,
                             target: dim.table_name,
-                            label: 'FK',
+                            label: 'HAS', // Relationship label
                             color: 'rgba(0, 123, 255, 0.4)',
                             strength: 1
                         });
@@ -76,7 +76,7 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                 id: nodeId,
                 group: 'term',
                 label: term.term,
-                size: 18,
+                size: 20,
                 details: term.mapping
             });
 
@@ -91,6 +91,7 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                     links.push({
                         source: nodeId,
                         target: targetTable.table_name,
+                        label: 'MAPS_TO', // Relationship label
                         dashed: true,
                         color: 'rgba(0, 200, 83, 0.7)', // Stronger color
                         strength: 2 // Pull much stronger
@@ -158,6 +159,8 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                     linkColor={link => link.color}
                     linkWidth={1.5}
                     linkDash={link => link.dashed ? [4, 2] : null}
+                    linkDirectionalParticles={2} // Add particles
+                    linkDirectionalParticleSpeed={0.005} // Slow, elegant particles
                     backgroundColor="transparent"
                     nodeRelSize={1}
                     d3VelocityDecay={0.4}
@@ -165,55 +168,115 @@ const OntologyGraph = ({ metadata, glossaryTerms = [] }) => {
                     nodeCanvasObject={(node, ctx, globalScale) => {
                         const label = node.label;
                         const r = node.size || 10;
-                        const isSelected = selectedNode && node.fullData && selectedNode.table_name === node.fullData.table_name;
+                        const x = node.x;
+                        const y = node.y;
 
-                        // Main circle
+                        // Safety check: ensure coordinates are finite before drawing
+                        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+                        const isSelected = selectedNode && node.fullData && selectedNode.table_name === node.fullData.table_name;
+                        const isTable = node.group === 'table';
+
+                        // Glow effect
+                        if (isTable || isSelected) {
+                            ctx.shadowColor = isSelected ? '#FFD700' : (isTable ? '#007BFF' : '#00C853');
+                            ctx.shadowBlur = isSelected ? 30 : 20;
+                        }
+
+                        // Gradient Fill
+                        const safeR = (Number.isFinite(r) && r > 0) ? r : 10;
+                        try {
+                            const gradient = ctx.createRadialGradient(x - safeR / 3, y - safeR / 3, 0, x, y, safeR);
+                            if (isTable) {
+                                gradient.addColorStop(0, '#8ecae6');
+                                gradient.addColorStop(0.3, '#2196f3');
+                                gradient.addColorStop(1, '#0d47a1');
+                            } else {
+                                gradient.addColorStop(0, '#b9f6ca');
+                                gradient.addColorStop(0.3, '#00e676');
+                                gradient.addColorStop(1, '#00c853');
+                            }
+                            ctx.fillStyle = gradient;
+                        } catch (e) {
+                            ctx.fillStyle = isTable ? '#007BFF' : '#00C853';
+                        }
+
                         ctx.beginPath();
-                        ctx.arc(node.x, node.y, r / 2, 0, 2 * Math.PI, false);
-                        ctx.fillStyle = getNodeColor(node);
+                        ctx.arc(x, y, safeR / 2, 0, 2 * Math.PI, false);
                         ctx.fill();
 
-                        // Border
-                        ctx.strokeStyle = isSelected ? '#FFD700' : '#fff'; // Gold for selected
-                        ctx.lineWidth = (isSelected ? 4 : 2) / globalScale;
+                        // Glossy Highlight
+                        ctx.beginPath();
+                        ctx.ellipse(x - safeR / 6, y - safeR / 6, safeR / 6, safeR / 10, Math.PI / 4, 0, 2 * Math.PI);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                        ctx.fill();
+
+                        ctx.shadowBlur = 0;
+                        ctx.strokeStyle = isSelected ? '#FFD700' : 'rgba(255,255,255,0.8)';
+                        ctx.lineWidth = (isSelected ? 3 : 1) / globalScale;
                         ctx.stroke();
 
                         // Label Rendering
                         const fontSize = 14 / globalScale;
                         ctx.font = `600 ${fontSize}px Inter, sans-serif`;
-                        const textWidth = ctx.measureText(label).width;
-                        const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.4);
+                        const labelY = y + (safeR / 2) + (8 / globalScale);
 
                         // Background Box
-                        ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
-                        const labelY = node.y + (r / 2) + (10 / globalScale);
-
-                        const bx = node.x - bckgDimensions[0] / 2;
+                        const textWidth = ctx.measureText(label).width;
+                        const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.4);
+                        ctx.fillStyle = 'rgba(10, 10, 10, 0.8)';
+                        const bx = x - bckgDimensions[0] / 2;
                         const by = labelY - fontSize / 2 - (fontSize * 0.1);
                         const bw = bckgDimensions[0];
                         const bh = bckgDimensions[1];
-                        const radius = 4 / globalScale;
-
+                        const radius = 6 / globalScale;
                         ctx.beginPath();
-                        ctx.moveTo(bx + radius, by);
-                        ctx.lineTo(bx + bw - radius, by);
-                        ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + radius);
-                        ctx.lineTo(bx + bw, by + bh - radius);
-                        ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - radius, by + bh);
-                        ctx.lineTo(bx + radius, by + bh);
-                        ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - radius);
-                        ctx.lineTo(bx, by + radius);
-                        ctx.quadraticCurveTo(bx, by, bx + radius, by);
-                        ctx.closePath();
+                        ctx.roundRect(bx, by, bw, bh, radius);
                         ctx.fill();
 
-                        // Text
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillStyle = isSelected ? '#FFD700' : '#FFFFFF';
-                        ctx.fillText(label, node.x, labelY + (fontSize * 0.1));
+                        ctx.fillText(label, x, labelY + (fontSize * 0.1));
+                    }}
+                    linkCanvasObject={(link, ctx, globalScale) => {
+                        const start = link.source;
+                        const end = link.target;
+
+                        if (!start || !end || !Number.isFinite(start.x) || !Number.isFinite(start.y) || !Number.isFinite(end.x) || !Number.isFinite(end.y)) return;
+
+                        ctx.beginPath();
+                        ctx.moveTo(start.x, start.y);
+                        ctx.lineTo(end.x, end.y);
+                        ctx.strokeStyle = link.color || '#999';
+                        ctx.lineWidth = 1.5 / globalScale;
+                        if (link.dashed) ctx.setLineDash([4, 2]);
+                        else ctx.setLineDash([]);
+                        ctx.stroke();
+
+                        if (link.label) {
+                            const midX = start.x + (end.x - start.x) * 0.5;
+                            const midY = start.y + (end.y - start.y) * 0.5;
+                            const fontSize = 10 / globalScale;
+                            ctx.font = `600 ${fontSize}px Inter, sans-serif`;
+                            const textWidth = ctx.measureText(link.label).width;
+
+                            ctx.fillStyle = 'rgba(20, 20, 20, 0.9)';
+                            ctx.strokeStyle = '#555';
+                            ctx.lineWidth = 1 / globalScale;
+                            ctx.beginPath();
+                            ctx.roundRect(midX - textWidth / 2 - 2, midY - fontSize / 2 - 2, textWidth + 4, fontSize + 4, 3);
+                            ctx.fill();
+                            ctx.stroke();
+
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillStyle = '#ccc';
+                            ctx.fillText(link.label, midX, midY);
+                        }
                     }}
                     nodeCanvasObjectMode={() => 'replace'}
+                    linkCanvasObjectMode={() => 'replace'}
                 />
 
                 <div style={{ position: 'absolute', bottom: '15px', left: '15px', display: 'flex', gap: '8px' }}>

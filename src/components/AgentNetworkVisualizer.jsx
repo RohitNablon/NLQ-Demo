@@ -9,7 +9,8 @@ import {
     BarChart2,
     FileText,
     MessageSquare,
-    CheckCircle
+    CheckCircle,
+    ShieldCheck
 } from 'lucide-react';
 import './AgentNetworkVisualizer.css';
 
@@ -49,9 +50,9 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
         },
         evaluator: {
             id: 'evaluator',
-            label: 'Evaluator',
+            label: 'Agent Evaluator',
             icon: Brain,
-            role: 'Router',
+            role: 'Decision Engine',
             description: 'Decides if the query needs Database access (SQL) or General Knowledge (LLM).',
             input: 'Refined Query',
             output: 'Routing Strategy',
@@ -62,7 +63,7 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
             id: 'general_llm',
             label: 'General LLM',
             icon: MessageSquare,
-            role: 'Chatbot',
+            role: 'Knowledge Model',
             description: 'Handles general questions, greetings, or effectively anything not requiring DB access.',
             input: 'Refined Query',
             output: 'Text Response',
@@ -81,9 +82,9 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
         },
         generator: {
             id: 'generator',
-            label: 'Query Engine',
+            label: 'SQL Generator',
             icon: Terminal,
-            role: 'Coder',
+            role: 'Coding Agent',
             description: 'Writes the actual SQL query based on the selected schema.',
             input: 'Schema, Query',
             output: 'SQL Query',
@@ -91,9 +92,9 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
         },
         sandbox: {
             id: 'sandbox',
-            label: 'Query Sandbox',
+            label: 'Execution Engine',
             icon: PlayCircle,
-            role: 'Tester',
+            role: 'Quality Assurance',
             description: 'Executes the query in a safe environment and catches errors.',
             input: 'SQL Query',
             output: 'Raw Data / Error',
@@ -102,9 +103,9 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
         // Visualizer (Moved to Center/Left relative to pipeline)
         visualizer: {
             id: 'visualizer',
-            label: 'Visualizer',
+            label: 'Data Visualizer',
             icon: BarChart2,
-            role: 'Analyst',
+            role: 'Visualization Agent',
             description: 'Determines the best chart type to represent the result data.',
             input: 'Query Results',
             output: 'Chart Configuration',
@@ -112,24 +113,34 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
         },
         final: {
             id: 'final',
-            label: 'Final Answer',
+            label: 'Response Synthesizer',
             icon: FileText,
-            role: 'Writer',
+            role: 'Narrator',
             description: 'Synthesizes the data into a human-readable natural language response.',
             input: 'Data, Chart',
             output: 'Final Response',
             x: 330, y: Y_START + Y_GAP * 6
         },
+        validator: {
+            id: 'validator',
+            label: 'LLM Validator',
+            icon: ShieldCheck,
+            role: 'Quality Judge',
+            description: 'Independent LLM instance evaluating the accuracy and tone of the response.',
+            input: 'Response',
+            output: 'Confidence Score',
+            x: 190, y: Y_START + Y_GAP * 6.5
+        },
         // Convergence
         end: {
             id: 'end',
-            label: 'End',
+            label: 'Final Output',
             icon: CheckCircle,
-            role: 'Terminator',
+            role: 'Delivery',
             description: 'Process complete.',
             input: 'Response',
             output: 'UI Render',
-            x: 190, y: Y_START + Y_GAP * 7
+            x: 190, y: Y_START + Y_GAP * 7.5
         }
     };
 
@@ -164,8 +175,10 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
             addPath('refiner', 'evaluator');
         }
 
-        const isSqlPath = ['selector', 'generator', 'sandbox', 'visualizer', 'final', 'end', 'complete'].includes(activeStep);
-        const isLlmPath = activeStep === 'general_llm';
+        const hasLlmTrace = trace && trace.general_llm;
+        const isLlmPath = activeStep === 'general_llm' || (hasLlmTrace && ['end', 'complete'].includes(activeStep));
+        // If we are on LLM path, we are NOT on SQL path, even if step is 'end'
+        const isSqlPath = !isLlmPath && ['selector', 'generator', 'sandbox', 'visualizer', 'final', 'end', 'complete'].includes(activeStep);
 
         if (isSqlPath) {
             addPath('evaluator', 'selector');
@@ -180,18 +193,32 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
             // Check if visualizer was actually triggered in the trace
             const isVisualizerActiveInTrace = trace && trace.visualizer;
 
-            if (isVisualizerActiveInTrace && ['visualizer', 'final', 'end', 'complete'].includes(activeStep)) {
+            if (isVisualizerActiveInTrace && ['visualizer', 'final', 'end', 'complete', 'validator'].includes(activeStep)) {
                 addPath('sandbox', 'visualizer');
-                if (['final', 'end', 'complete'].includes(activeStep)) {
+                if (['final', 'end', 'complete', 'validator'].includes(activeStep)) {
                     addPath('visualizer', 'final');
                 }
-            } else if (!isVisualizerActiveInTrace && ['final', 'end', 'complete'].includes(activeStep)) {
+            } else if (!isVisualizerActiveInTrace && ['final', 'end', 'complete', 'validator'].includes(activeStep)) {
                 // Direct path from Sandbox to Final if Visualizer was skipped
                 addPath('sandbox', 'final');
             }
+
+            // Validator Logic for SQL path
+            const isValidatorActiveInTrace = trace && trace.validator;
+            if (isValidatorActiveInTrace && ['validator', 'end', 'complete'].includes(activeStep)) {
+                addPath('final', 'validator');
+                if (['end', 'complete'].includes(activeStep)) {
+                    addPath('validator', 'end');
+                }
+            } else if (!isValidatorActiveInTrace && ['end', 'complete'].includes(activeStep)) {
+                // Direct path from Final to End if Validator was skipped
+                addPath('final', 'end');
+            }
         }
         else if (isLlmPath) {
+            addPath('refiner', 'evaluator'); // Add refiner-evaluator for LLM path too
             addPath('evaluator', 'general_llm');
+
             if (['end', 'complete'].includes(activeStep)) {
                 addPath('general_llm', 'end');
             }
@@ -322,6 +349,35 @@ const AgentNetworkVisualizer = ({ activeStep, trace }) => {
                     </div>
                 </div>
             )}
+            {/* Active Rich Reasoning Card */}
+            {activeStep && !['end', 'complete'].includes(activeStep) && trace && trace[activeStep] && nodesConfig[activeStep] && (() => {
+                const node = nodesConfig[activeStep];
+                const side = node.x > 250 ? 'left' : 'right';
+                const Icon = node.icon;
+
+                return (
+                    <div className={`rich-reasoning-card ${side} fade-in`} style={{
+                        left: side === 'right' ? node.x + 140 : node.x - 240,
+                        top: node.y,
+                    }}>
+                        <div className={`card-arrow ${side}`} />
+                        <div className="card-header">
+                            <div className="agent-avatar">
+                                <Icon size={14} />
+                                <div className="thinking-ring" />
+                            </div>
+                            <span className="agent-name">{node.label}</span>
+                            <div className="status-badge">Thinking...</div>
+                        </div>
+                        <div className="card-body">
+                            {typeof trace[activeStep] === 'string' ? trace[activeStep] : 'Synthesizing knowledge...'}
+                        </div>
+                        <div className="card-footer">
+                            <div className="thinking-line" />
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 };
