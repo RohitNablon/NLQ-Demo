@@ -1,0 +1,85 @@
+[
+    {
+        "id": "retail-sales-wh",
+        "name": "Retail Sales Warehouse",
+        "description": "Contains all sales transactions, customer data, and product information from 2020-present",
+        "icon": "database",
+        "domain": "sales",
+        "status": "live",
+        "lastUpdated": "2 hours ago",
+        "metrics": {
+            "totalRecords": "250M",
+            "dateRange": "2020-01-01 to 2026-02-08",
+            "tables": 15,
+            "records": "250M",
+            "queriesThisMonth": 847
+        },
+        "domains": [
+            "Sales",
+            "Inventory",
+            "Customer Analytics"
+        ],
+        "dataSources": [
+            "SAP ERP",
+            "Salesforce CRM",
+            "Custom POS"
+        ],
+        "dataQuality": 94,
+        "updateFrequency": "Real-time",
+        "lastValidated": "2026-02-07"
+    },
+    {
+        "id": "inventory-mgmt",
+        "name": "Inventory Management System",
+        "description": "Real-time inventory tracking across all warehouses and distribution centers",
+        "icon": "warehouse",
+        "domain": "operations",
+        "status": "live",
+        "lastUpdated": "15 minutes ago",
+        "metrics": {
+            "totalRecords": "50M",
+            "dateRange": "2021-01-01 to 2026-02-08",
+            "tables": 8,
+            "records": "50M",
+            "queriesThisMonth": 423
+        },
+        "domains": [
+            "Inventory",
+            "Supply Chain"
+        ],
+        "dataSources": [
+            "Oracle WMS",
+            "Custom Inventory System"
+        ],
+        "dataQuality": 92,
+        "updateFrequency": "Real-time",
+        "lastValidated": "2026-02-08"
+    },
+    {
+        "id": "employee-db",
+        "name": "Employee Analytics",
+        "description": "Employee data, performance metrics, and HR information",
+        "icon": "users",
+        "domain": "hr",
+        "status": "live",
+        "lastUpdated": "1 hour ago",
+        "metrics": {
+            "totalRecords": "5.2K",
+            "dateRange": "2018-01-01 to 2026-02-08",
+            "tables": 4,
+            "records": "5.2K",
+            "queriesThisMonth": 156
+        },
+        "domains": [
+            "HR",
+            "People Analytics"
+        ],
+        "dataSources": [
+            "Workday",
+            "Custom HRMS"
+        ],
+        "dataQuality": 96,
+        "updateFrequency": "Daily",
+        "lastValidated": "2026-02-08"
+    }
+]

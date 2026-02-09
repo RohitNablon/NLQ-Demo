@@ -1,0 +1,99 @@
+{
+  "schema": {
+    "Employee": {
+      "columns": [
+        "Id",
+        "Email",
+        "First_Name",
+        "Last_Name"
+      ],
+      "rowCount": 5
+    },
+    "ROLE": {
+      "columns": [
+        "Id",
+        "Designation",
+        "Employee_ID"
+      ],
+      "rowCount": 5
+    }
+  },
+  "data": {
+    "employees": [
+      {
+        "id": 1,
+        "email": "mail1@outlook.com",
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      {
+        "id": 2,
+        "email": "mail2@outlook.com",
+        "firstName": "Kevin",
+        "lastName": "Eleven"
+      },
+      {
+        "id": 3,
+        "email": "mail3@outlook.com",
+        "firstName": "Martha",
+        "lastName": "Steward"
+      },
+      {
+        "id": 4,
+        "email": "mail4@outlook.com",
+        "firstName": "Gwen",
+        "lastName": "Tenison"
+      },
+      {
+        "id": 5,
+        "email": "mail5@outlook.com",
+        "firstName": "Max",
+        "lastName": "Pope"
+      }
+    ],
+    "roles": [
+      {
+        "id": 1,
+        "designation": "HR",
+        "employeeId": 1
+      },
+      {
+        "id": 2,
+        "designation": "CEO",
+        "employeeId": 2
+      },
+      {
+        "id": 3,
+        "designation": "CTO",
+        "employeeId": 3
+      },
+      {
+        "id": 4,
+        "designation": "CFO",
+        "employeeId": 4
+      },
+      {
+        "id": 5,
+        "designation": "Intern",
+        "employeeId": 5
+      }
+    ]
+  },
+  "sampleQueries": [
+    {
+      "question": "How many employees do we have?",
+      "sql": "SELECT COUNT(*) FROM Employee",
+      "result": 5
+    },
+    {
+      "question": "List all employees and their roles",
+      "sql": "SELECT e.First_Name, e.Last_Name, r.Designation FROM Employee e JOIN ROLE r ON e.Id = r.Employee_ID",
+      "result": "table"
+    },
+    {
+      "question": "Who is the CEO?",
+      "sql": "SELECT e.First_Name, e.Last_Name FROM Employee e JOIN ROLE r ON e.Id = r.Employee_ID WHERE r.Designation = 'CEO'",
+      "result": "Kevin Eleven"
+    }
+  ]
+}

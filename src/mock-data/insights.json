@@ -1,0 +1,344 @@
+{
+    "retail-sales-wh": {
+        "keyMetrics": [
+            {
+                "label": "Total Revenue",
+                "value": "$12.5M",
+                "change": 8,
+                "trend": "up",
+                "sparkline": [
+                    11.2,
+                    11.4,
+                    11.6,
+                    11.8,
+                    12.0,
+                    12.3,
+                    12.5
+                ]
+            },
+            {
+                "label": "Orders",
+                "value": "45,230",
+                "change": 12,
+                "trend": "up",
+                "sparkline": [
+                    38000,
+                    40000,
+                    41000,
+                    42500,
+                    43800,
+                    44500,
+                    45230
+                ]
+            },
+            {
+                "label": "Avg Order Value",
+                "value": "$276",
+                "change": -3,
+                "trend": "down",
+                "sparkline": [
+                    295,
+                    290,
+                    285,
+                    282,
+                    280,
+                    278,
+                    276
+                ]
+            },
+            {
+                "label": "Customer Acquisition",
+                "value": "2,340",
+                "change": 15,
+                "trend": "up",
+                "sparkline": [
+                    1800,
+                    1900,
+                    2000,
+                    2100,
+                    2200,
+                    2280,
+                    2340
+                ]
+            }
+        ],
+        "revenueTrend": {
+            "title": "Revenue Trend - Last 90 Days",
+            "data": [
+                {
+                    "date": "2025-11-10",
+                    "revenue": 380000,
+                    "orders": 1420,
+                    "target": 350000
+                },
+                {
+                    "date": "2025-11-17",
+                    "revenue": 395000,
+                    "orders": 1480,
+                    "target": 350000
+                },
+                {
+                    "date": "2025-11-24",
+                    "revenue": 410000,
+                    "orders": 1520,
+                    "target": 350000
+                },
+                {
+                    "date": "2025-12-01",
+                    "revenue": 425000,
+                    "orders": 1580,
+                    "target": 400000
+                },
+                {
+                    "date": "2025-12-08",
+                    "revenue": 440000,
+                    "orders": 1620,
+                    "target": 400000
+                },
+                {
+                    "date": "2025-12-15",
+                    "revenue": 455000,
+                    "orders": 1680,
+                    "target": 400000
+                },
+                {
+                    "date": "2025-12-22",
+                    "revenue": 470000,
+                    "orders": 1720,
+                    "target": 400000
+                },
+                {
+                    "date": "2025-12-29",
+                    "revenue": 485000,
+                    "orders": 1780,
+                    "target": 400000
+                },
+                {
+                    "date": "2026-01-05",
+                    "revenue": 500000,
+                    "orders": 1820,
+                    "target": 450000
+                },
+                {
+                    "date": "2026-01-12",
+                    "revenue": 520000,
+                    "orders": 1880,
+                    "target": 450000
+                },
+                {
+                    "date": "2026-01-19",
+                    "revenue": 540000,
+                    "orders": 1950,
+                    "target": 450000
+                },
+                {
+                    "date": "2026-01-26",
+                    "revenue": 560000,
+                    "orders": 2010,
+                    "target": 450000
+                },
+                {
+                    "date": "2026-02-02",
+                    "revenue": 580000,
+                    "orders": 2080,
+                    "target": 500000
+                }
+            ]
+        },
+        "topProducts": {
+            "title": "Top 10 Products by Revenue",
+            "data": [
+                {
+                    "product": "Premium Coffee Maker",
+                    "revenue": 1250000,
+                    "target": 1000000,
+                    "status": "above"
+                },
+                {
+                    "product": "Smart Air Fryer",
+                    "revenue": 980000,
+                    "target": 900000,
+                    "status": "above"
+                },
+                {
+                    "product": "Cordless Vacuum",
+                    "revenue": 875000,
+                    "target": 800000,
+                    "status": "above"
+                },
+                {
+                    "product": "Electric Kettle",
+                    "revenue": 720000,
+                    "target": 750000,
+                    "status": "on"
+                },
+                {
+                    "product": "Food Processor",
+                    "revenue": 680000,
+                    "target": 700000,
+                    "status": "on"
+                },
+                {
+                    "product": "Blender Pro",
+                    "revenue": 590000,
+                    "target": 650000,
+                    "status": "below"
+                },
+                {
+                    "product": "Toaster Oven",
+                    "revenue": 520000,
+                    "target": 550000,
+                    "status": "below"
+                },
+                {
+                    "product": "Espresso Machine",
+                    "revenue": 480000,
+                    "target": 500000,
+                    "status": "on"
+                },
+                {
+                    "product": "Slow Cooker",
+                    "revenue": 425000,
+                    "target": 450000,
+                    "status": "below"
+                },
+                {
+                    "product": "Stand Mixer",
+                    "revenue": 385000,
+                    "target": 400000,
+                    "status": "on"
+                }
+            ]
+        },
+        "regionalSales": {
+            "title": "Sales by Region",
+            "data": [
+                {
+                    "region": "Northeast",
+                    "sales": 4200000,
+                    "percentage": 33.6
+                },
+                {
+                    "region": "Midwest",
+                    "sales": 3150000,
+                    "percentage": 25.2
+                },
+                {
+                    "region": "South",
+                    "sales": 2800000,
+                    "percentage": 22.4
+                },
+                {
+                    "region": "West",
+                    "sales": 2350000,
+                    "percentage": 18.8
+                }
+            ]
+        },
+        "customerSegments": {
+            "title": "Revenue by Customer Segment",
+            "data": [
+                {
+                    "segment": "Premium",
+                    "revenue": 4375000,
+                    "percentage": 35
+                },
+                {
+                    "segment": "Standard",
+                    "revenue": 3500000,
+                    "percentage": 28
+                },
+                {
+                    "segment": "Budget",
+                    "revenue": 2500000,
+                    "percentage": 20
+                },
+                {
+                    "segment": "Enterprise",
+                    "revenue": 1500000,
+                    "percentage": 12
+                },
+                {
+                    "segment": "New",
+                    "revenue": 625000,
+                    "percentage": 5
+                }
+            ]
+        },
+        "anomalies": {
+            "title": "Unusual Patterns Detected",
+            "alerts": [
+                {
+                    "severity": "warning",
+                    "message": "Inventory levels 30% below normal in Northeast region",
+                    "impact": "Medium",
+                    "recommendation": "Review supply chain for Northeast warehouses"
+                },
+                {
+                    "severity": "caution",
+                    "message": "Customer churn rate increased 5% in premium segment",
+                    "impact": "High",
+                    "recommendation": "Implement retention program for premium customers"
+                }
+            ]
+        },
+        "narratives": {
+            "executive": "Overall performance is strong this month with revenue up 8%. However, average order value has declined slightly, suggesting customers are purchasing more frequently but with smaller basket sizes.",
+            "keyFindings": [
+                "✓ Revenue growth driven by increased order volume (+12%)",
+                "⚠ Watch: AOV declining trend in Premium segment (-3%)",
+                "📈 Opportunity: Northeast region performing 2x above average (33.6% of total sales)"
+            ]
+        }
+    },
+    "inventory-mgmt": {
+        "keyMetrics": [
+            {
+                "label": "Total SKUs",
+                "value": "15,420",
+                "change": 2,
+                "trend": "up"
+            },
+            {
+                "label": "Stock Value",
+                "value": "$8.3M",
+                "change": -5,
+                "trend": "down"
+            },
+            {
+                "label": "Turnover Rate",
+                "value": "6.2x",
+                "change": 8,
+                "trend": "up"
+            },
+            {
+                "label": "Stockouts",
+                "value": "23",
+                "change": -15,
+                "trend": "down"
+            }
+        ]
+    },
+    "employee-db": {
+        "keyMetrics": [
+            {
+                "label": "Total Employees",
+                "value": "5",
+                "change": 0,
+                "trend": "stable"
+            },
+            {
+                "label": "Departments",
+                "value": "5",
+                "change": 0,
+                "trend": "stable"
+            },
+            {
+                "label": "Avg Tenure",
+                "value": "3.2 yrs",
+                "change": 5,
+                "trend": "up"
+            }
+        ]
+    }
+}

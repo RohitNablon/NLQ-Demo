@@ -1,0 +1,133 @@
+{
+    "platformHealth": {
+        "connectedDatabases": 3,
+        "queriesExecuted": 847,
+        "queriesLastMonth": 756,
+        "activeUsers": 45,
+        "activeUsersLastMonth": 42,
+        "avgResponseTime": 1.2
+    },
+    "businessImpact": {
+        "timeSaved": 256,
+        "reportsAutomated": 18,
+        "insightsGenerated": 1240,
+        "userSatisfaction": 4.2
+    },
+    "queryTrend": [
+        {
+            "date": "2026-01-05",
+            "queries": 520,
+            "users": 38
+        },
+        {
+            "date": "2026-01-12",
+            "queries": 580,
+            "users": 40
+        },
+        {
+            "date": "2026-01-19",
+            "queries": 645,
+            "users": 41
+        },
+        {
+            "date": "2026-01-26",
+            "queries": 710,
+            "users": 43
+        },
+        {
+            "date": "2026-02-02",
+            "queries": 790,
+            "users": 45
+        },
+        {
+            "date": "2026-02-09",
+            "queries": 847,
+            "users": 45
+        }
+    ],
+    "databaseUtilization": [
+        {
+            "database": "Sales Warehouse",
+            "queries": 425,
+            "percentage": 50.2
+        },
+        {
+            "database": "Inventory Mgmt",
+            "queries": 289,
+            "percentage": 34.1
+        },
+        {
+            "database": "Employee DB",
+            "queries": 133,
+            "percentage": 15.7
+        }
+    ],
+    "topInsights": [
+        {
+            "question": "What were total sales last month?",
+            "frequency": 47,
+            "category": "Sales",
+            "impact": "High"
+        },
+        {
+            "question": "Which products have declining inventory?",
+            "frequency": 38,
+            "category": "Inventory",
+            "impact": "High"
+        },
+        {
+            "question": "Show employee count by department",
+            "frequency": 29,
+            "category": "HR",
+            "impact": "Medium"
+        }
+    ],
+    "userAdoption": {
+        "newUsers": 8,
+        "activeUsers": 45,
+        "powerUsers": 12,
+        "casualUsers": 33,
+        "departments": [
+            {
+                "name": "Sales",
+                "users": 15,
+                "adoption": 75
+            },
+            {
+                "name": "Operations",
+                "users": 12,
+                "adoption": 60
+            },
+            {
+                "name": "Finance",
+                "users": 10,
+                "adoption": 50
+            },
+            {
+                "name": "HR",
+                "users": 8,
+                "adoption": 40
+            }
+        ]
+    },
+    "executiveSummary": {
+        "narrative": "Platform adoption continues strong growth with 847 queries executed this month (+12% vs. last month). User engagement is particularly high in the Sales department (75% adoption rate). The average query response time of 1.2 seconds demonstrates excellent performance. Key recommendation: Expand onboarding to Finance and HR departments to drive further adoption.",
+        "highlights": [
+            "Query volume up 12% - strongest growth in Sales Analytics use cases",
+            "Time saved reached 256 hours this month - equivalent to $38,400 in productivity gains",
+            "User satisfaction at 4.2/5 - above industry benchmark of 3.8/5",
+            "18 manual reports successfully automated and now self-service"
+        ],
+        "recommendations": [
+            "Accelerate onboarding in Finance and HR departments",
+            "Create advanced training for power users to maximize platform value",
+            "Consider expanding Sales Warehouse database with promotional data"
+        ]
+    },
+    "governance": {
+        "dataSecurityCompliance": "100%",
+        "accessAudits": 847,
+        "qualityScore": 98,
+        "lastAudit": "2 days ago"
+    }
+}

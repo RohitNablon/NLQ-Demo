@@ -1,0 +1,610 @@
+{
+    "retail-sales-wh": {
+        "q1": {
+            "question": "Identify seasonal purchasing patterns and predict Q1 revenue anomalies",
+            "agents": [
+                {
+                    "id": "intent_agent",
+                    "name": "Intent Agent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.5,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor Agent",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.4,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "schema_metadata",
+                    "name": "Schema/Metadata Agent",
+                    "type": "context",
+                    "position": [
+                        2,
+                        1.5
+                    ],
+                    "duration": 0.6,
+                    "icon": "Database"
+                },
+                {
+                    "id": "clarification",
+                    "name": "Clarification Agent",
+                    "type": "context",
+                    "position": [
+                        3,
+                        1.5
+                    ],
+                    "duration": 0.3,
+                    "icon": "MessageSquare"
+                },
+                {
+                    "id": "governance_qa",
+                    "name": "Governance & QA Agent",
+                    "type": "validation",
+                    "position": [
+                        2,
+                        2.5
+                    ],
+                    "duration": 0.5,
+                    "icon": "Eye"
+                },
+                {
+                    "id": "compliance_pii",
+                    "name": "Compliance - PII/RBAC",
+                    "type": "validation",
+                    "position": [
+                        3,
+                        2.5
+                    ],
+                    "duration": 0.5,
+                    "icon": "User"
+                },
+                {
+                    "id": "graph_planner",
+                    "name": "Just-in-Time Graph Planner",
+                    "type": "orchestration",
+                    "position": [
+                        -1,
+                        2
+                    ],
+                    "duration": 0.7,
+                    "icon": "Wrench"
+                },
+                {
+                    "id": "query_decomposition",
+                    "name": "Query Decomposition Agent",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 0.6,
+                    "icon": "Search"
+                },
+                {
+                    "id": "sql_translator",
+                    "name": "SQL Translator",
+                    "type": "processing",
+                    "position": [
+                        -1,
+                        3.5
+                    ],
+                    "duration": 0.8,
+                    "icon": "Code"
+                },
+                {
+                    "id": "cache_check",
+                    "name": "Cache Agent",
+                    "type": "retrieval",
+                    "position": [
+                        1,
+                        3.5
+                    ],
+                    "duration": 0.4,
+                    "icon": "Database"
+                },
+                {
+                    "id": "data_retrieval",
+                    "name": "Data Retrieval Agent",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4.5
+                    ],
+                    "duration": 1.0,
+                    "icon": "Download"
+                },
+                {
+                    "id": "semantic_agent",
+                    "name": "Semantic Agent",
+                    "type": "presentation",
+                    "position": [
+                        -1.5,
+                        5.5
+                    ],
+                    "duration": 0.6,
+                    "icon": "MessageSquare"
+                },
+                {
+                    "id": "viz_agent",
+                    "name": "Visualization Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5.5
+                    ],
+                    "duration": 0.7,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "summarization",
+                    "name": "Summarization Agent",
+                    "type": "presentation",
+                    "position": [
+                        1.5,
+                        5.5
+                    ],
+                    "duration": 0.5,
+                    "icon": "FileText"
+                },
+                {
+                    "id": "cortex_agent",
+                    "name": "Cortex Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6.5
+                    ],
+                    "duration": 0.4,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent_agent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "schema_metadata"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "clarification"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "graph_planner"
+                },
+                {
+                    "source": "schema_metadata",
+                    "target": "governance_qa"
+                },
+                {
+                    "source": "clarification",
+                    "target": "compliance_pii"
+                },
+                {
+                    "source": "governance_qa",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "compliance_pii",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "graph_planner",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "query_decomposition",
+                    "target": "sql_translator"
+                },
+                {
+                    "source": "query_decomposition",
+                    "target": "cache_check"
+                },
+                {
+                    "source": "sql_translator",
+                    "target": "data_retrieval"
+                },
+                {
+                    "source": "cache_check",
+                    "target": "data_retrieval"
+                },
+                {
+                    "source": "data_retrieval",
+                    "target": "semantic_agent"
+                },
+                {
+                    "source": "data_retrieval",
+                    "target": "viz_agent"
+                },
+                {
+                    "source": "data_retrieval",
+                    "target": "summarization"
+                },
+                {
+                    "source": "semantic_agent",
+                    "target": "cortex_agent"
+                },
+                {
+                    "source": "viz_agent",
+                    "target": "cortex_agent"
+                },
+                {
+                    "source": "summarization",
+                    "target": "cortex_agent"
+                }
+            ],
+            "answer": "**Seasonal Purchasing Patterns Analysis**\n\n### Q1 2025 Forecast:\n- **Predicted Revenue**: $3.2M (±8%)  \n- **Key Anomaly Detected**: 15% drop expected in Electronics vs historical Q1 average\n\n### Pattern Insights:\n- Holiday spillover typically adds 12% to January sales\n- Valentine's Day creates Feb spike in Home Goods (+22%)  \n- Q1 electronics decline linked to post-holiday fatigue\n\n### Recommendations:\n- Accelerate Home Goods promotions in Feb\n- Preemptive clearance for Electronics inventory\n\n*✅ Seasonal model validated with 92% historical accuracy*",
+            "followUp": [
+                "Drill down into Electronics decline by region",
+                "Compare Home Goods spike to last year",
+                "Show inventory levels for Electronics",
+                "Generate campaign briefs for Valentine's promo"
+            ]
+        },
+        "q2": {
+            "question": "Analyze cross-category product affinity and uncover hidden bundle opportunities",
+            "agents": [
+                {
+                    "id": "intent_agent",
+                    "name": "Intent Agent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.4,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor Agent",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.3,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "schema_metadata",
+                    "name": "Schema/Metadata Agent",
+                    "type": "context",
+                    "position": [
+                        1.5,
+                        1.5
+                    ],
+                    "duration": 0.5,
+                    "icon": "Database"
+                },
+                {
+                    "id": "graph_planner",
+                    "name": "Graph Planner/Compiler",
+                    "type": "orchestration",
+                    "position": [
+                        -1.5,
+                        1.5
+                    ],
+                    "duration": 0.6,
+                    "icon": "Wrench"
+                },
+                {
+                    "id": "query_decomposition",
+                    "name": "Query Decomposition",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        2.5
+                    ],
+                    "duration": 0.5,
+                    "icon": "Search"
+                },
+                {
+                    "id": "sql_translator",
+                    "name": "SQL Translator",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        3.5
+                    ],
+                    "duration": 0.9,
+                    "icon": "Code"
+                },
+                {
+                    "id": "data_retrieval",
+                    "name": "Data Retrieval",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4.5
+                    ],
+                    "duration": 1.2,
+                    "icon": "Download"
+                },
+                {
+                    "id": "viz_agent",
+                    "name": "Visualization Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5.5
+                    ],
+                    "duration": 0.8,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "cortex_agent",
+                    "name": "Cortex Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6.5
+                    ],
+                    "duration": 0.4,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent_agent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "schema_metadata"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "graph_planner"
+                },
+                {
+                    "source": "schema_metadata",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "graph_planner",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "query_decomposition",
+                    "target": "sql_translator"
+                },
+                {
+                    "source": "sql_translator",
+                    "target": "data_retrieval"
+                },
+                {
+                    "source": "data_retrieval",
+                    "target": "viz_agent"
+                },
+                {
+                    "source": "viz_agent",
+                    "target": "cortex_agent"
+                }
+            ],
+            "answer": "**Hidden Bundle Opportunities**\n\n### High-Affinity Cross-Category Pairs:\n1. **Smart Home Devices + Home Security** (72% co-purchase rate)\n2. **Fitness Trackers + Athleisure Apparel** (68% affinity)\n3. **Kitchen Appliances + Cookware Sets** (64% affinity)\n\n### Untapped Opportunities:\n- Bundle premium coffee makers with artisanal coffee subscriptions → Est. +$240K/year\n- Package outdoor furniture with smart lighting → Est. +$180K/year\n\n### Customer Behavior Pattern:\n- Customers buying 2+ categories have 3.2x higher LTV\n- Bundle adoption increases repeat purchase rate by 38%\n\n*Affinity analysis based on 2.4M transaction data points*",
+            "followUp": [
+                "Simulate revenue impact of Coffee bundle",
+                "List top regions for Smart Home adoption",
+                "Create marketing email for Kitchen bundle",
+                "Analyze churn rate for multi-category buyers"
+            ]
+        },
+        "q9": {
+            "question": "Who are my top 10 customers by lifetime value?",
+            "agents": [
+                {
+                    "id": "intent_agent",
+                    "name": "Intent Agent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.3,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor Agent",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.2,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "compliance_pii",
+                    "name": "Compliance - PII/RBAC",
+                    "type": "validation",
+                    "position": [
+                        1.5,
+                        1.5
+                    ],
+                    "duration": 0.4,
+                    "icon": "User"
+                },
+                {
+                    "id": "query_decomposition",
+                    "name": "Query Decomposition",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        2.5
+                    ],
+                    "duration": 0.3,
+                    "icon": "Search"
+                },
+                {
+                    "id": "sql_translator",
+                    "name": "SQL Translator",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        3.5
+                    ],
+                    "duration": 0.6,
+                    "icon": "Code"
+                },
+                {
+                    "id": "customer_db",
+                    "name": "Customer Database",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4.5
+                    ],
+                    "duration": 0.8,
+                    "icon": "Database"
+                },
+                {
+                    "id": "cortex_agent",
+                    "name": "Cortex Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5.5
+                    ],
+                    "duration": 0.3,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent_agent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "compliance_pii"
+                },
+                {
+                    "source": "compliance_pii",
+                    "target": "query_decomposition"
+                },
+                {
+                    "source": "query_decomposition",
+                    "target": "sql_translator"
+                },
+                {
+                    "source": "sql_translator",
+                    "target": "customer_db"
+                },
+                {
+                    "source": "customer_db",
+                    "target": "cortex_agent"
+                }
+            ],
+            "answer": "**Top 10 Customers by Lifetime Value**\n\n1. **TechCorp Inc.** - $245,000 (Enterprise)\n2. **Global Retail Solutions** - $189,500 (Enterprise)\n3. **DataDriven LLC** - $156,200 (Enterprise)\n4. **SmartBuy Co.** - $134,800 (Premium)\n5. **Innovation Partners** - $121,300 (Premium)\n6. **NextGen Systems** - $108,900 (Premium)\n7. **Future Ventures** - $98,700 (Premium)\n8. **Digital Dynamics** - $87,400 (Premium)\n9. **Strategic Solutions** - $76,200 (Standard)\n10. **Growth Enterprises** - $68,500 (Standard)\n\n**Total LTV (Top 10)**: $1.29M\n**Average Order Value**: $2,340\n\n*✅ PII compliance validated - customer data masked per RBAC policy*",
+            "followUp": [
+                "Show purchase history for TechCorp Inc.",
+                "Predict churn risk for these top 10",
+                "Recommend upsell products for Retail Solutions",
+                "Export this list to CRM"
+            ]
+        }
+    },
+    "employee-db": {
+        "q16": {
+            "question": "How many employees do we have?",
+            "agents": [
+                {
+                    "id": "intent_agent",
+                    "name": "Intent Agent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.2,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor Agent",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.2,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "sql_translator",
+                    "name": "SQL Translator",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        2
+                    ],
+                    "duration": 0.4,
+                    "icon": "Code"
+                },
+                {
+                    "id": "hr_database",
+                    "name": "HR Database",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 0.3,
+                    "icon": "Database"
+                },
+                {
+                    "id": "cortex_agent",
+                    "name": "Cortex Agent",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        4
+                    ],
+                    "duration": 0.2,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent_agent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "sql_translator"
+                },
+                {
+                    "source": "sql_translator",
+                    "target": "hr_database"
+                },
+                {
+                    "source": "hr_database",
+                    "target": "cortex_agent"
+                }
+            ],
+            "answer": "**Total Employees**: 247\n\n### Breakdown by Department:\n- Engineering: 89 (36%)\n- Sales: 62 (25%)\n- Operations: 47 (19%)\n- Marketing: 28 (11%)\n- Finance: 21 (9%)\n\n### Employment Type:\n- Full-time: 231 (94%)\n- Contract: 16 (6%)",
+            "followUp": [
+                "Show org chart for Engineering",
+                "List open positions in Sales",
+                "Analyze efficienty per department",
+                "Compare headcount to last year"
+            ]
+        }
+    }
+}

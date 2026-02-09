@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+        "paths": {
+            "@/*": [
+                "./*"
+            ],
+            "@lego/*": [
+                "../../Philips-oneblade/Lego-Modules/nablon-lego-ux/src/*"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ]
+}

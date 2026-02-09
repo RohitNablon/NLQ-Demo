@@ -1,0 +1,466 @@
+{
+    "1": {
+        "question": "What were total sales last month?",
+        "answer": {
+            "text": "Total sales for January 2026 were **$12.5M**, representing an **8% increase** compared to December 2025 ($11.6M). This growth was driven primarily by increased transaction volume in the Northeast and Midwest regions.",
+            "metrics": {
+                "totalSales": 12500000,
+                "percentChange": 8,
+                "previousMonth": 11600000
+            },
+            "sql": "SELECT SUM(revenue) as total_sales\nFROM sales_fact\nWHERE date >= '2026-01-01' AND date < '2026-02-01'",
+            "executionTime": "0.24s",
+            "chartType": "metric",
+            "chartData": null,
+            "followUpQuestions": [
+                "Break this down by region",
+                "Show me the trend over last 6 months",
+                "Which product categories contributed most?"
+            ]
+        },
+        "agentWorkflow": {
+            "totalTime": 1.37,
+            "bottleneck": "SQL Translator",
+            "agents": [
+                {
+                    "id": "query-parser",
+                    "name": "Query Parser",
+                    "type": "understanding",
+                    "color": "blue",
+                    "input": "What were total sales last month?",
+                    "output": {
+                        "intent": "sales_query",
+                        "metric": "revenue",
+                        "timeframe": "last_month",
+                        "aggregation": "sum"
+                    },
+                    "processingSteps": [
+                        "Identified intent: Sales query",
+                        "Detected entities: metric='sales', timeframe='last month'",
+                        "Mapped timeframe: 2026-01-01 to 2026-02-01"
+                    ],
+                    "executionTime": 0.12,
+                    "confidence": 0.96,
+                    "status": "complete"
+                },
+                {
+                    "id": "sql-translator",
+                    "name": "SQL Translator",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "Structured query object: {metric: 'revenue', timeframe: {...}, aggregation: 'sum'}",
+                    "output": "SELECT SUM(revenue) as total_sales FROM sales_fact WHERE date >= '2026-01-01' AND date < '2026-02-01'",
+                    "processingSteps": [
+                        "Mapped 'sales' to 'revenue' column",
+                        "Identified table: sales_fact",
+                        "Applied date filter: >= 2026-01-01 AND < 2026-02-01",
+                        "Added SUM aggregation"
+                    ],
+                    "executionTime": 0.68,
+                    "confidence": 0.94,
+                    "status": "complete"
+                },
+                {
+                    "id": "data-fetcher",
+                    "name": "Data Fetcher",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "SQL query",
+                    "output": "Result: $12,500,000",
+                    "processingSteps": [
+                        "Executed SQL query",
+                        "Retrieved 1 row",
+                        "Formatted result"
+                    ],
+                    "executionTime": 0.35,
+                    "confidence": 1.0,
+                    "status": "complete"
+                },
+                {
+                    "id": "response-generator",
+                    "name": "Response Generator",
+                    "type": "visualization",
+                    "color": "purple",
+                    "input": "Query result: $12.5M + context",
+                    "output": "Natural language response with metrics and comparison",
+                    "processingSteps": [
+                        "Formatted currency: $12.5M",
+                        "Calculated percentage change: +8%",
+                        "Generated natural language explanation",
+                        "Added regional context"
+                    ],
+                    "executionTime": 0.22,
+                    "confidence": 0.92,
+                    "status": "complete"
+                }
+            ],
+            "flow": [
+                {
+                    "from": "query-parser",
+                    "to": "sql-translator",
+                    "data": "Structured query"
+                },
+                {
+                    "from": "sql-translator",
+                    "to": "data-fetcher",
+                    "data": "SQL query"
+                },
+                {
+                    "from": "data-fetcher",
+                    "to": "response-generator",
+                    "data": "Result set"
+                }
+            ]
+        }
+    },
+    "5": {
+        "question": "Which premium products had declining sales in Q4 in the Northeast?",
+        "answer": {
+            "text": "In Q4 2025, **3 premium products** showed declining sales in the Northeast region:\n\n1. **Premium Coffee Maker** (-15%, from $850K to $723K)\n2. **High-End Blender** (-8%, from $520K to $478K)  \n3. **Deluxe Toaster Oven** (-5%, from $380K to $361K)\n\nTotal declined revenue from these products: **$188K**. The decline correlates with increased competition from mid-tier products in the region.",
+            "metrics": {
+                "productsDeclined": 3,
+                "totalDeclinedRevenue": 188000
+            },
+            "sql": "SELECT \n  product_name, \n  SUM(CASE WHEN quarter='Q3' THEN revenue ELSE 0 END) as q3_revenue,\n  SUM(CASE WHEN quarter='Q4' THEN revenue ELSE 0 END) as q4_revenue,\n  ((SUM(CASE WHEN quarter='Q4' THEN revenue ELSE 0 END) - \n    SUM(CASE WHEN quarter='Q3' THEN revenue ELSE 0 END)) / \n    SUM(CASE WHEN quarter='Q3' THEN revenue ELSE 0 END)) * 100 as pct_change\nFROM sales_fact sf\nJOIN product_dim pd ON sf.product_id = pd.id\nJOIN location_dim ld ON sf.location_id = ld.id\nWHERE ld.region = 'Northeast' \n  AND pd.segment = 'Premium'\n  AND quarter IN ('Q3', 'Q4')\nGROUP BY product_name\nHAVING pct_change < 0\nORDER BY pct_change ASC",
+            "executionTime": "0.48s",
+            "chartType": "bar",
+            "chartData": {
+                "labels": [
+                    "Premium Coffee Maker",
+                    "High-End Blender",
+                    "Deluxe Toaster Oven"
+                ],
+                "datasets": [
+                    {
+                        "label": "Q3 2025",
+                        "data": [
+                            850000,
+                            520000,
+                            380000
+                        ]
+                    },
+                    {
+                        "label": "Q4 2025",
+                        "data": [
+                            723000,
+                            478000,
+                            361000
+                        ]
+                    }
+                ]
+            },
+            "followUpQuestions": [
+                "Why is this happening?",
+                "Compare to other regions",
+                "What's the competitive landscape?"
+            ]
+        },
+        "agentWorkflow": {
+            "totalTime": 2.85,
+            "bottleneck": "SQL Translator",
+            "agents": [
+                {
+                    "id": "query-parser",
+                    "name": "Query Parser",
+                    "type": "understanding",
+                    "color": "blue",
+                    "input": "Which premium products had declining sales in Q4 in the Northeast?",
+                    "output": {
+                        "intent": "product_analysis",
+                        "filters": [
+                            "segment=Premium",
+                            "region=Northeast",
+                            "timeframe=Q4"
+                        ],
+                        "condition": "declining_sales",
+                        "groupBy": "product"
+                    },
+                    "processingSteps": [
+                        "Identified intent: Product performance analysis",
+                        "Extracted filters: segment, region, timeframe",
+                        "Detected condition: 'declining' requires comparison",
+                        "Determined comparison period: Q3 vs Q4"
+                    ],
+                    "executionTime": 0.18,
+                    "confidence": 0.93,
+                    "status": "complete"
+                },
+                {
+                    "id": "entity-extractor",
+                    "name": "Entity Extractor",
+                    "type": "understanding",
+                    "color": "blue",
+                    "input": "Raw query",
+                    "output": {
+                        "entities": [
+                            {
+                                "type": "segment",
+                                "value": "Premium"
+                            },
+                            {
+                                "type": "region",
+                                "value": "Northeast"
+                            },
+                            {
+                                "type": "timeframe",
+                                "value": "Q4"
+                            },
+                            {
+                                "type": "metric",
+                                "value": "sales"
+                            },
+                            {
+                                "type": "trend",
+                                "value": "declining"
+                            }
+                        ]
+                    },
+                    "processingSteps": [
+                        "Extracted 'Premium' → product segment",
+                        "Extracted 'Northeast' → geographic region",
+                        "Extracted 'Q4' → time period",
+                        "Extracted 'declining' → trend filter"
+                    ],
+                    "executionTime": 0.15,
+                    "confidence": 0.95,
+                    "status": "complete"
+                },
+                {
+                    "id": "semantic-mapper",
+                    "name": "Semantic Mapper",
+                    "type": "understanding",
+                    "color": "blue",
+                    "input": "Entities",
+                    "output": "Database schema mapping",
+                    "processingSteps": [
+                        "Mapped 'Premium' → product_dim.segment",
+                        "Mapped 'Northeast' → location_dim.region",
+                        "Mapped 'Q4' → sales_fact.quarter",
+                        "Determined JOIN requirements: 3 tables"
+                    ],
+                    "executionTime": 0.22,
+                    "confidence": 0.91,
+                    "status": "complete"
+                },
+                {
+                    "id": "sql-translator",
+                    "name": "SQL Translator",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "Structured query with schema mapping",
+                    "output": "Complex SQL with JOINs and CASE statements",
+                    "processingSteps": [
+                        "Built JOIN chain: sales_fact → product_dim → location_dim",
+                        "Created CASE statements for Q3/Q4 comparison",
+                        "Added percentage change calculation",
+                        "Applied HAVING clause for negative growth",
+                        "Optimized query execution plan"
+                    ],
+                    "executionTime": 1.12,
+                    "confidence": 0.89,
+                    "status": "complete"
+                },
+                {
+                    "id": "data-fetcher",
+                    "name": "Data Fetcher",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "SQL query",
+                    "output": "3 products with Q3/Q4 comparison",
+                    "processingSteps": [
+                        "Executed SQL query",
+                        "Retrieved 3 rows",
+                        "Validated data completeness"
+                    ],
+                    "executionTime": 0.54,
+                    "confidence": 1.0,
+                    "status": "complete"
+                },
+                {
+                    "id": "chart-selector",
+                    "name": "Chart Selector",
+                    "type": "visualization",
+                    "color": "purple",
+                    "input": "Result set structure",
+                    "output": "Grouped bar chart recommendation",
+                    "processingSteps": [
+                        "Analyzed data: categorical (products) + 2 time periods",
+                        "Recommended: Grouped bar chart",
+                        "Configured chart colors: Q3=blue, Q4=red (to show decline)"
+                    ],
+                    "executionTime": 0.18,
+                    "confidence": 0.94,
+                    "status": "complete"
+                },
+                {
+                    "id": "response-generator",
+                    "name": "Response Generator",
+                    "type": "visualization",
+                    "color": "purple",
+                    "input": "Data + chart spec",
+                    "output": "Natural language response + chart + insights",
+                    "processingSteps": [
+                        "Generated summary: 3 products declined",
+                        "Formatted as numbered list with percentages",
+                        "Created chart data structure",
+                        "Added contextual insight about competition"
+                    ],
+                    "executionTime": 0.46,
+                    "confidence": 0.90,
+                    "status": "complete"
+                }
+            ],
+            "flow": [
+                {
+                    "from": "query-parser",
+                    "to": "entity-extractor",
+                    "data": "Query intent"
+                },
+                {
+                    "from": "query-parser",
+                    "to": "semantic-mapper",
+                    "data": "Query structure"
+                },
+                {
+                    "from": "entity-extractor",
+                    "to": "semantic-mapper",
+                    "data": "Entities"
+                },
+                {
+                    "from": "semantic-mapper",
+                    "to": "sql-translator",
+                    "data": "Schema mapping"
+                },
+                {
+                    "from": "sql-translator",
+                    "to": "data-fetcher",
+                    "data": "SQL query"
+                },
+                {
+                    "from": "data-fetcher",
+                    "to": "chart-selector",
+                    "data": "Result set"
+                },
+                {
+                    "from": "data-fetcher",
+                    "to": "response-generator",
+                    "data": "Data"
+                },
+                {
+                    "from": "chart-selector",
+                    "to": "response-generator",
+                    "data": "Chart spec"
+                }
+            ]
+        }
+    },
+    "16": {
+        "question": "How many employees do we have?",
+        "answer": {
+            "text": "We currently have **5 employees** in our organization across 5 different roles.",
+            "metrics": {
+                "totalEmployees": 5,
+                "totalRoles": 5
+            },
+            "sql": "SELECT COUNT(*) as total FROM Employee",
+            "executionTime": "0.08s",
+            "chartType": "metric",
+            "chartData": null,
+            "followUpQuestions": [
+                "List all employees and their roles",
+                "Who is the CEO?",
+                "Show me the organizational chart"
+            ]
+        },
+        "agentWorkflow": {
+            "totalTime": 0.52,
+            "bottleneck": "Query Parser",
+            "agents": [
+                {
+                    "id": "query-parser",
+                    "name": "Query Parser",
+                    "type": "understanding",
+                    "color": "blue",
+                    "input": "How many employees do we have?",
+                    "output": {
+                        "intent": "count_query",
+                        "entity": "employees",
+                        "aggregation": "count"
+                    },
+                    "processingSteps": [
+                        "Identified intent: Count query",
+                        "Detected entity: 'employees'",
+                        "Mapped to COUNT aggregation"
+                    ],
+                    "executionTime": 0.10,
+                    "confidence": 0.98,
+                    "status": "complete"
+                },
+                {
+                    "id": "sql-translator",
+                    "name": "SQL Translator",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "Count employees",
+                    "output": "SELECT COUNT(*) as total FROM Employee",
+                    "processingSteps": [
+                        "Mapped 'employees' to Employee table",
+                        "Generated COUNT(*) query",
+                        "Simple query - no JOINs needed"
+                    ],
+                    "executionTime": 0.22,
+                    "confidence": 0.99,
+                    "status": "complete"
+                },
+                {
+                    "id": "data-fetcher",
+                    "name": "Data Fetcher",
+                    "type": "data_retrieval",
+                    "color": "green",
+                    "input": "SQL query",
+                    "output": "Result: 5",
+                    "processingSteps": [
+                        "Executed query on employee.db",
+                        "Retrieved count: 5"
+                    ],
+                    "executionTime": 0.08,
+                    "confidence": 1.0,
+                    "status": "complete"
+                },
+                {
+                    "id": "response-generator",
+                    "name": "Response Generator",
+                    "type": "visualization",
+                    "color": "purple",
+                    "input": "Count: 5",
+                    "output": "Natural language response",
+                    "processingSteps": [
+                        "Formatted number: 5 employees",
+                        "Added context: across 5 roles",
+                        "Generated simple response"
+                    ],
+                    "executionTime": 0.12,
+                    "confidence": 0.95,
+                    "status": "complete"
+                }
+            ],
+            "flow": [
+                {
+                    "from": "query-parser",
+                    "to": "sql-translator",
+                    "data": "Query structure"
+                },
+                {
+                    "from": "sql-translator",
+                    "to": "data-fetcher",
+                    "data": "SQL"
+                },
+                {
+                    "from": "data-fetcher",
+                    "to": "response-generator",
+                    "data": "Result"
+                }
+            ]
+        }
+    }
+}

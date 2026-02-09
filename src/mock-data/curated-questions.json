@@ -1,0 +1,150 @@
+[
+    {
+        "id": 1,
+        "question": "Identify seasonal purchasing patterns and predict Q1 revenue anomalies",
+        "category": "Sales",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "🔮",
+        "workflowId": "q1"
+    },
+    {
+        "id": 2,
+        "question": "Analyze cross-category product affinity and uncover hidden bundle opportunities",
+        "category": "Sales",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "🧩",
+        "workflowId": "q2"
+    },
+    {
+        "id": 3,
+        "question": "Which customer segments show declining lifetime value despite increasing purchase frequency?",
+        "category": "Sales",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "📉"
+    },
+    {
+        "id": 4,
+        "question": "Detect regional pricing inefficiencies that are impacting competitive positioning",
+        "category": "Sales",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "🎯"
+    },
+    {
+        "id": 5,
+        "question": "Which premium products had declining sales in Q4 in the Northeast?",
+        "category": "Sales",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "⚠️"
+    },
+    {
+        "id": 6,
+        "question": "How does inventory turnover compare across regions?",
+        "category": "Inventory",
+        "complexity": "intermediate",
+        "database": "retail-sales-wh",
+        "icon": "📦"
+    },
+    {
+        "id": 7,
+        "question": "Which SKUs are currently overstocked?",
+        "category": "Inventory",
+        "complexity": "intermediate",
+        "database": "inventory-mgmt",
+        "icon": "⚠️"
+    },
+    {
+        "id": 8,
+        "question": "Show me products with stock-out risk",
+        "category": "Inventory",
+        "complexity": "basic",
+        "database": "inventory-mgmt",
+        "icon": "🔴"
+    },
+    {
+        "id": 9,
+        "question": "Who are my top 10 customers by lifetime value?",
+        "category": "Customer",
+        "complexity": "basic",
+        "database": "retail-sales-wh",
+        "icon": "👥",
+        "workflowId": "q9"
+    },
+    {
+        "id": 10,
+        "question": "Which customer segments are growing fastest?",
+        "category": "Customer",
+        "complexity": "intermediate",
+        "database": "retail-sales-wh",
+        "icon": "📊"
+    },
+    {
+        "id": 11,
+        "question": "What products do high-value customers buy together?",
+        "category": "Customer",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "🔗"
+    },
+    {
+        "id": 12,
+        "question": "Are we seeing any seasonal patterns in sales?",
+        "category": "Trends",
+        "complexity": "intermediate",
+        "database": "retail-sales-wh",
+        "icon": "📅"
+    },
+    {
+        "id": 13,
+        "question": "Which stores have the best foot traffic conversion rates?",
+        "category": "Trends",
+        "complexity": "intermediate",
+        "database": "retail-sales-wh",
+        "icon": "🏪"
+    },
+    {
+        "id": 14,
+        "question": "Show me anomalies in recent sales data",
+        "category": "Trends",
+        "complexity": "advanced",
+        "database": "retail-sales-wh",
+        "icon": "🔍"
+    },
+    {
+        "id": 15,
+        "question": "Compare this quarter's performance to last year",
+        "category": "Trends",
+        "complexity": "basic",
+        "database": "retail-sales-wh",
+        "icon": "📊"
+    },
+    {
+        "id": 16,
+        "question": "How many employees do we have?",
+        "category": "HR",
+        "complexity": "basic",
+        "database": "employee-db",
+        "icon": "👥",
+        "workflowId": "q16"
+    },
+    {
+        "id": 17,
+        "question": "List all employees and their roles",
+        "category": "HR",
+        "complexity": "basic",
+        "database": "employee-db",
+        "icon": "📋"
+    },
+    {
+        "id": 18,
+        "question": "Who is the CEO?",
+        "category": "HR",
+        "complexity": "basic",
+        "database": "employee-db",
+        "icon": "👔"
+    }
+]

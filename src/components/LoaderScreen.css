@@ -1,0 +1,150 @@
+.loader-screen {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    padding: 0;
+}
+
+.loader-content {
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+    animation: loaderFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes loaderFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loader-spinner-wrapper {
+    margin-bottom: 2.5rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.loader-spinner {
+    width: 64px;
+    height: 64px;
+    border: 3px solid rgba(0, 123, 255, 0.1);
+    border-top: 3px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.loader-status {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    font-weight: 500;
+}
+
+.loader-progress-container {
+    padding: 0 2rem;
+    margin-bottom: 3rem;
+}
+
+.progress-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.progress-glow-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007BFF, #00d2ff);
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.1, 0.8, 0.2, 1);
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+}
+
+.loader-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 2rem;
+    text-align: left;
+}
+
+.loader-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: all 0.4s ease;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: transparent;
+}
+
+.loader-step.active {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.02);
+    transform: translateX(4px);
+}
+
+.loader-step.completed {
+    color: rgba(255, 255, 255, 0.4);
+    opacity: 0.8;
+}
+
+.step-indicator {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 0.7rem;
+    font-weight: 800;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.loader-step.active .step-indicator {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 15px var(--accent-glow);
+    border-color: transparent;
+}
+
+.loader-step.completed .step-indicator {
+    background: rgba(40, 199, 111, 0.15);
+    color: #28c76f;
+    border-color: rgba(40, 199, 111, 0.2);
+}
+
+.loader-step.completed .step-indicator svg {
+    filter: drop-shadow(0 0 5px rgba(40, 199, 111, 0.5));
+}

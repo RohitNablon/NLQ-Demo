@@ -1,0 +1,1136 @@
+{
+  "database_type": "sqlite",
+  "version": "2.0",
+  "generated_at": "2026-02-05T14:11:15.957730",
+  "generator_version": "0.1.0",
+  "tables": [
+    {
+      "table_id": "e4bcc710-cb26-49e6-9a7b-8a163c8bdd61",
+      "schema_name": null,
+      "table_name": "Dim_Product",
+      "table_type": "table",
+      "description": {
+        "description": "Dim_Product is a product master (dimension) table that defines the catalog of sellable items used for reporting and analysis across sales, inventory, and distribution processes. Each product is uniquely identified by item_number and described via item_description, with classification fields such as category/category_name to support category-level performance reporting and assortment management. Packaging attributes like pack and bottle_volume_ml enable operational and pricing analytics (e.g., case vs. unit comparisons, volume-based metrics). With 7,263 rows, it is a relatively small, stable reference table typically joined to transactional fact tables on item_number and commonly indexed on item_number (and often category) for fast lookups."
+      },
+      "row_count": 7263,
+      "size_bytes": null,
+      "last_updated": null,
+      "columns": [
+        {
+          "column_id": "b660c23f-4425-493d-aa1c-39cae21e1924",
+          "name": "item_number",
+          "data_type": "INTEGER",
+          "is_nullable": true,
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 101,
+            "max_value": 27324,
+            "avg_value": 10608.25,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the unique product/item identifier used by the business (e.g., SKU) to distinguish each product in the Dim_Product catalog. It is always populated and appears to be unique per row, making it the primary key-like field used to join product attributes (description, category, pack, bottle volume) to sales/inventory facts. In practice, enforce a uniqueness constraint and index it to support fast lookups and reliable joins."
+          },
+          "examples": [
+            "101",
+            "102",
+            "104"
+          ],
+          "key_type": "Primary",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "b9081084-5c05-48b8-84aa-39c49dedfacc",
+          "name": "item_description",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "item_description is the human-readable product name used to identify and market each SKU in the product dimension, often including brand, proof/size, and promotional bundle details (e.g., glassware or mini add-ons). It is always populated and appears unique per product, making it useful for search, reporting labels, and ad-hoc filtering, though item_number should remain the primary key while this field may benefit from a text index for lookup and should be governed to prevent inconsistent naming."
+          },
+          "examples": [
+            "Stolichnaya Premium 80prf w/2 Stemless Martini Glasses",
+            "Bushmills 750ml w/Blackbush 50ml",
+            "Broker's Gin Holiday w/1 Collins Glass"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "2fc26e9e-c30e-4e66-b028-2ce851b28b4e",
+          "name": "category",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 100,
+            "min_value": 1011100,
+            "max_value": 1901200,
+            "avg_value": 1090638.04,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the numeric product category code used to classify each item in the product dimension, typically aligning to an internal merchandising/taxonomy scheme. In Dim_Product it serves as a stable key for grouping and filtering products (e.g., reporting sales by category) and should be consistently populated; consider indexing it and enforcing referential integrity to a category lookup (or validating against category_name) to prevent invalid codes."
+          },
+          "examples": [
+            "1701200",
+            "1701100",
+            "1012400"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "e4db47df-8223-431c-b54b-85c6a77a4c59",
+          "name": "category_name",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 126,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "category_name is the human-readable product category label used to group items in Dim_Product into business merchandising segments (e.g., Holiday VAP, Decanters & Specialty Packages, Irish Whiskies). It is consistently populated and effectively unique per product in this dataset, making it useful for reporting, filtering, and rollups by category; consider indexing it for common category-based queries and enforcing a controlled vocabulary (or mapping to a category dimension) to prevent inconsistent naming."
+          },
+          "examples": [
+            "Holiday VAP",
+            "DECANTERS & SPECIALTY PACKAGES",
+            "Irish Whiskies"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "46ce6591-5fa9-425a-a304-d84fb4738ca0",
+          "name": "pack",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 28,
+            "min_value": 1,
+            "max_value": 600,
+            "avg_value": 90.82,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "The \"pack\" column represents the pack size for a product—i.e., how many bottles/units are included in the standard case or selling package for that item. In Dim_Product it helps distinguish SKUs that share similar descriptions or volumes but differ by packaging, and supports pricing, inventory, and shipment calculations (e.g., converting cases to bottles). It appears consistently populated and is a good candidate for a positive-integer constraint and frequent use in queries that compute total units (pack × bottle_volume_ml or pack × quantity)."
+          },
+          "examples": [
+            "6",
+            "24",
+            "12"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "63e1fc98-f5ff-4a99-936f-f4dd47e33416",
+          "name": "bottle_volume_ml",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 49,
+            "min_value": 0,
+            "max_value": 378000,
+            "avg_value": 24915.73,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "bottle_volume_ml represents the container size for a product expressed in milliliters, used to distinguish SKUs that may share similar descriptions or categories but differ by package volume. In Dim_Product it supports pricing, inventory, and sales analytics by enabling normalization to volume (e.g., price per liter) and comparisons across pack sizes; it appears consistently populated but should be constrained to non-negative, realistic ranges and is commonly used as a filter/grouping attribute in reporting (often alongside pack)."
+          },
+          "examples": [
+            "750",
+            "800",
+            "3600"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "aef034df-5500-4eae-870c-6365f9c946c0",
+      "schema_name": null,
+      "table_name": "Dim_Store",
+      "table_type": "table",
+      "description": {
+        "description": "Dim_Store is a store master (dimension) table that represents each retail location used for reporting and analysis across sales, inventory, and operational metrics. It provides the business identity and geography of a store via key attributes such as store_number (primary business identifier), store_name, and address/city/zip_code for location-based segmentation. county_number and county support regional rollups and alignment to county-level reporting or compliance needs. With ~1,882 rows, it is a relatively small reference table typically joined to fact tables on store_number; indexing on store_number (and optionally city/county_number) is commonly used to speed lookups and aggregations."
+      },
+      "row_count": 1882,
+      "size_bytes": null,
+      "last_updated": null,
+      "columns": [
+        {
+          "column_id": "a1cfc69a-d55a-4749-9cac-557cc410d115",
+          "name": "store_number",
+          "data_type": "INTEGER",
+          "is_nullable": true,
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 2106,
+            "max_value": 4613,
+            "avg_value": 3809.3,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Unique numeric identifier assigned to each physical store location, used as the primary business key to reference a store across transactions and reporting. In the Dim_Store table it anchors the store’s descriptive attributes (name, address, geography) and is always populated, making it ideal for joins, filtering, and aggregations by store. Enforce uniqueness and index it to support fast lookups and consistent store-level analytics."
+          },
+          "examples": [
+            "2106",
+            "2113",
+            "2130"
+          ],
+          "key_type": "Primary",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "144839b0-4ec2-4f00-873c-819f0fd29e76",
+          "name": "store_name",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "The store_name column holds the human-readable name of each retail location (e.g., the trading name customers recognize), serving as a primary label for stores in the Dim_Store dimension alongside identifiers and address details. It is consistently populated and appears to uniquely identify each store in this dataset, making it useful for reporting, search, and user-facing displays; consider enforcing uniqueness and indexing it to support fast lookups and filtering (while relying on store_number as the stable key if names can change)."
+          },
+          "examples": [
+            "Hillstreet News and Tobacco",
+            "Jamboree Foods",
+            "Sycamore Convenience"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "f1955b4e-e353-4eae-ae2a-d4bc84b77394",
+          "name": "address",
+          "data_type": "TEXT (address)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the street address for each store location, providing the physical site used for mail delivery, customer directions, and operational logistics. In Dim_Store it complements store_name, city, zip_code, and county to uniquely identify and locate a store, and appears to be consistently populated with one address per store. Commonly used for location-based searches and reporting; consider standardizing/validating format (e.g., USPS rules) and indexing if frequently filtered or joined on address fields."
+          },
+          "examples": [
+            "2217 COLLEGE",
+            "1119 MARKET ST. BOX 71",
+            "617 SYCAMORE"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "49dadab3-7b99-4ca1-9f54-5754e1707376",
+          "name": "city",
+          "data_type": "TEXT (city)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 554,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the city where each store in the Dim_Store dimension is physically located, supporting geographic analysis and reporting (e.g., sales or store counts by city) alongside address, ZIP, and county attributes. The field is consistently populated and appears to be treated as a unique city label per store record, so it’s useful for filtering and grouping but should be standardized (case/spacing) and ideally paired with state/ZIP or store_number for reliable joins and indexing."
+          },
+          "examples": [
+            "CEDAR FALLS",
+            "GOWRIE",
+            "WATERLOO"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Categorical Filtering",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "1b73a3a9-4ee9-4d99-9668-8aafef9d162f",
+          "name": "zip_code",
+          "data_type": "INTEGER (zipcode)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 450,
+            "min_value": 50002,
+            "max_value": 56201,
+            "avg_value": 51228.05,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "The zip_code column stores the postal ZIP code for each store’s physical address, enabling location-based reporting and operational decisions such as regional performance analysis, delivery routing, and targeted marketing. It is consistently populated and appears to uniquely identify each store location in this dimension, making it useful for filtering and grouping by geography and a good candidate for indexing and basic ZIP-format validation constraints."
+          },
+          "examples": [
+            "50613",
+            "50543",
+            "50703"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Exact Match Filtering, Geographic Grouping",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "5bdd6c88-08a6-4a46-95d8-e951dc06cdf9",
+          "name": "store_location",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the store’s full physical location as a single formatted text block, typically combining street address, city/ZIP, and embedded latitude/longitude for mapping. In Dim_Store it serves as a human-readable location reference and a quick way to support geospatial lookups or proximity analysis, though for reliable querying it’s best to enforce a consistent format and/or parse the coordinates into separate fields (and index those) rather than filtering on the raw text."
+          },
+          "examples": [
+            "2217 COLLEGE\nCEDAR FALLS 50613\n(42.517607, -92.455802)",
+            "1119 MARKET ST. BOX 71\nGOWRIE 50543\n(42.28057, -94.289457)",
+            "617 SYCAMORE\nWATERLOO 50703\n(42.498, -92.335585)"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "e43ff1f1-2f3e-465d-979f-76eda42b81c3",
+          "name": "county_number",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 99,
+            "min_value": 1,
+            "max_value": 99,
+            "avg_value": 50,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "county_number is the numeric identifier for the county where each store is located, providing a standardized code to complement the county name for consistent reporting and integration with external geographic reference data. In Dim_Store it supports reliable grouping, filtering, and joining of stores by county (e.g., sales by county, territory analysis) and is always populated, making it a good candidate for indexing and for enforcing a valid county-code domain constraint."
+          },
+          "examples": [
+            "7",
+            "94",
+            "33"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "36c374f2-62ae-4982-b866-1bc3a71b0b5d",
+          "name": "county",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 177,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the county (e.g., Iowa county name) where each store is physically located, providing a geographic dimension for the store master data in Dim_Store. It is consistently populated and effectively identifies a unique county per store, enabling reporting and analysis by county (sales, coverage, compliance) and supporting common filters/joins; consider indexing it for frequent county-based queries and validating against county_number or an approved county list to prevent misspellings."
+          },
+          "examples": [
+            "Black Hawk",
+            "Webster",
+            "Fayette"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "7b035070-5ad7-4109-83da-924f52608d0f",
+      "schema_name": null,
+      "table_name": "Dim_Vendor",
+      "table_type": "table",
+      "description": {
+        "description": "Dim_Vendor is a vendor master (dimension) table that represents the set of suppliers the business purchases from and uses for reporting and analysis. The key identifier is vendor_number, which serves as the stable vendor key used to join to purchasing, invoice, or spend fact tables, while vendor_name provides the human-readable supplier name for dashboards and operational lookups. With only 265 rows, it is a small reference dataset likely shared across many transactions; vendor_number should be unique and indexed to support fast joins and consistent vendor attribution."
+      },
+      "row_count": 265,
+      "size_bytes": null,
+      "last_updated": null,
+      "columns": [
+        {
+          "column_id": "5cb42cf4-9da0-4ecd-b95b-2804415c9b3e",
+          "name": "vendor_number",
+          "data_type": "INTEGER",
+          "is_nullable": true,
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 265,
+            "min_value": 10,
+            "max_value": 987,
+            "avg_value": 317.72,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Unique numeric identifier assigned to each vendor, used as the primary business key to reference and join vendor records across purchasing, invoicing, and spend reporting. In Dim_Vendor it pairs with vendor_name to provide a stable lookup for vendor attributes and is always populated with one value per vendor. It should be constrained as unique (and typically indexed) to support fast joins and prevent duplicate vendor entries."
+          },
+          "examples": [
+            "10",
+            "14",
+            "27"
+          ],
+          "key_type": "Primary",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "799c1e7e-bc1e-44de-bf20-368811369a31",
+          "name": "vendor_name",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 265,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "The vendor_name column stores the human-readable legal or trade name of each supplier represented in the Dim_Vendor dimension, used for reporting, vendor lookups, and grouping spend or purchases by supplier. It appears to be always populated and unique per vendor record, making it a reliable display attribute typically paired with vendor_number as the stable key; consider indexing it to speed name-based searches and enforcing uniqueness/standardized formatting to prevent duplicate vendors created under slightly different names."
+          },
+          "examples": [
+            "A Hardy / U.S.A., Ltd.",
+            "Adamba Imports Int'l, Inc.",
+            "Anheuser-Busch/Longtail Libations"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "9d33e20c-ad38-4ea3-bdc3-b3fbdf194cec",
+      "schema_name": null,
+      "table_name": "Fact_Sales",
+      "table_type": "table",
+      "description": {
+        "description": "Fact_Sales is the central transaction fact table capturing individual product sales recorded on invoices, representing the core sales process across stores and items over time. Key business identifiers include invoice_number (ties line-level sales back to a customer transaction), store_number (where the sale occurred), and item_number (what product was sold), with measures such as bottles_sold, sale_amount, and volume_sold_liters/gallons supporting revenue and volume analytics. It links to Dim_Store, Dim_Vendor, and Dim_Item to enable slicing sales by location, supplier, and product attributes for reporting and performance management. With ~12.5M rows, it is designed for high-volume analytics and typically benefits from indexing/partitioning on Date and common join keys (store_number, item_number, vendor_number) to keep queries performant."
+      },
+      "row_count": 12495974,
+      "size_bytes": null,
+      "last_updated": null,
+      "columns": [
+        {
+          "column_id": "813ea90b-46f3-4c94-999b-2d57f4c22a69",
+          "name": "invoice_number",
+          "data_type": "TEXT",
+          "is_nullable": true,
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 378900001,
+            "max_value": 306831300031,
+            "avg_value": 43577242767.33,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the unique invoice identifier for each sales transaction recorded in Fact_Sales, linking line-level item sales (by store, item, vendor, and date) back to the originating invoice document. It appears to be always populated and effectively unique per record, making it a reliable key for tracing, auditing, and reconciling sales. In practice, it should be indexed and treated as a required identifier (and potentially a primary/unique key depending on grain) to support fast invoice lookups and joins to invoice header/detail tables."
+          },
+          "examples": [
+            "306831300001",
+            "306831300002",
+            "306831300003"
+          ],
+          "key_type": "Primary",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "187a04c2-67ab-4ba2-87c3-858c7a5b556b",
+          "name": "store_number",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 2106,
+            "max_value": 9002,
+            "avg_value": 3992.9,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Unique identifier for the retail store/location where each sales invoice line was recorded, enabling sales to be attributed to a specific outlet for performance and compliance reporting. In Fact_Sales it serves as a key dimension for aggregating sale_amount, bottles_sold, and volume by store and for joining to a store master table; it is always populated and effectively unique per record in this dataset. Consider indexing it and enforcing a foreign-key constraint to the store dimension to support fast store-level queries and data integrity."
+          },
+          "examples": [
+            "2538",
+            "2662",
+            "3650"
+          ],
+          "key_type": "Foreign",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "571087d0-3820-4ecf-b8af-b3b1a4a180b7",
+          "name": "item_number",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 173,
+            "max_value": 988063,
+            "avg_value": 53858.49,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the unique product (SKU) identifier for the specific liquor item sold on each sales transaction line in Fact_Sales. It is always populated and functions as the primary key to join sales facts to an item/product master for attributes like brand, category, and package size; it’s commonly used to filter and aggregate sales by item and is a strong candidate for indexing and referential integrity constraints to the product dimension."
+          },
+          "examples": [
+            "238",
+            "173",
+            "258"
+          ],
+          "key_type": "Foreign",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "114e3a70-9e9d-4ac2-b767-abe57d753b29",
+          "name": "vendor_number",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 265,
+            "min_value": 10,
+            "max_value": 987,
+            "avg_value": 317.72,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "vendor_number is the identifier of the supplier/vendor associated with each sales line in Fact_Sales, enabling attribution of invoice activity and sold volumes to the company providing the item. It is always populated and appears to function as a key-like code used to join to a vendor master for names and attributes, and to support vendor-level sales, margin, and compliance reporting. In practice, it should be indexed for common aggregations and joins, and constrained (e.g., foreign key/domain check) to valid vendor records."
+          },
+          "examples": [
+            "962",
+            "65",
+            "305"
+          ],
+          "key_type": "Foreign",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "2fe70d31-3282-4f08-9502-30d373928a10",
+          "name": "Date",
+          "data_type": "TEXT (date)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the calendar date when each sales transaction (invoice line) occurred, providing the time dimension for analyzing liquor sales activity. In Fact_Sales it enables daily/weekly/monthly trend reporting and period comparisons across stores, items, and vendors, and it appears to be consistently populated for every record. Since it is stored as text, consider enforcing a valid date format (or converting to a DATE type) and indexing it to speed up common date-range queries and time-based aggregations."
+          },
+          "examples": [
+            "11/09/2015",
+            "11/30/2015",
+            "11/11/2015"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Date Range Filtering, Temporal Ordering, Indexing Recommended",
+          "derivative": null,
+          "temporal_logic": "Temporal column. Use for time-based filtering and ordering."
+        },
+        {
+          "column_id": "d324d47e-f765-41fc-b5ea-fb020cc1a35d",
+          "name": "state_bottle_cost",
+          "data_type": "TEXT (state)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the state-defined wholesale cost per bottle for the item on the sales invoice line, stored as a currency-formatted text value. In Fact_Sales it supports margin and pricing analysis when compared to state_bottle_retail and sale_amount, and is always populated at the transaction level. For reliable calculations and filtering, consider enforcing a currency/decimal format (or storing as a numeric type) and indexing if frequently used in margin or cost-based queries."
+          },
+          "examples": [
+            "$11.62",
+            "$19.58",
+            "$99.00"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Categorical Filtering, Grouping",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "bfae2daf-b768-4744-887b-7e0c7219fc3d",
+          "name": "state_bottle_retail",
+          "data_type": "TEXT (state)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the state-mandated retail price per bottle for the item on the sales invoice line, stored as a currency-formatted text value. In Fact_Sales it provides the reference shelf price used to compare against actual sale_amount and margins versus state_bottle_cost, and it is always present per record. For analytics and filtering, consider storing/deriving a numeric price (and enforcing a currency format) and indexing the numeric version if frequently queried by price ranges."
+          },
+          "examples": [
+            "$17.43",
+            "$29.37",
+            "$148.50"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Categorical Filtering, Grouping",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "604d79e7-793a-41d9-9fa1-469790804a36",
+          "name": "bottles_sold",
+          "data_type": "INTEGER",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 448,
+            "min_value": 0,
+            "max_value": 15000,
+            "avg_value": 673.12,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "bottles_sold represents the number of individual bottles (units) sold on a given sales transaction line in the Fact_Sales table, tying an invoice/store/item/vendor/date to the quantity sold. It is consistently populated and supports core metrics such as revenue and volume validation (e.g., reconciling sale_amount and volume_sold_liters/gallons) as well as demand analysis; consider enforcing a non-negative constraint and indexing it only if quantity-based filtering/aggregation is frequent."
+          },
+          "examples": [
+            "6",
+            "4",
+            "1"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "a2492f43-71ec-4021-9333-badbc504849d",
+          "name": "sale_amount",
+          "data_type": "TEXT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": null,
+            "max_value": null,
+            "avg_value": null,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the total dollar amount of each sales line on an invoice (the extended sale value for the item sold), used as the primary revenue measure in the Fact_Sales table alongside quantities and volumes. It appears always populated and highly granular per transaction, but is stored as text with a currency symbol, so it should be parsed/cast to a numeric currency type for accurate aggregation, filtering, and indexing (and ideally constrained to a valid money/decimal format)."
+          },
+          "examples": [
+            "$104.58",
+            "$117.48",
+            "$17.43"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Text Search, Pattern Matching, Filtering, Indexing for Searches",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "a431ddb7-2d2c-4dd9-8b8a-20ddcb719417",
+          "name": "volume_sold_liters",
+          "data_type": "FLOAT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 0,
+            "max_value": 15000,
+            "avg_value": 466.72,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the total quantity of product sold on each sales transaction line, expressed in liters, providing a standardized measure of volume regardless of package size. In Fact_Sales it supports volume-based reporting and reconciliation with bottles_sold and volume_sold_gallons (e.g., conversions, pricing per liter, and demand analysis), and appears consistently populated for every record. Consider validating it as non-negative and using it in aggregations/filters for high-volume sales queries (typically indexed via the table’s transaction keys rather than as a standalone index)."
+          },
+          "examples": [
+            "9.0",
+            "3.0",
+            "1.5"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        },
+        {
+          "column_id": "630e2890-ee02-4eba-a44b-7c43924b4af7",
+          "name": "volume_sold_gallons",
+          "data_type": "FLOAT",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "default_value": null,
+          "profile": {
+            "null_count": 0,
+            "null_percentage": 0,
+            "distinct_count": 1000,
+            "min_value": 0,
+            "max_value": 3962.58,
+            "avg_value": 123.84,
+            "pattern_regex": null,
+            "value_lengths": null
+          },
+          "description": {
+            "description": "Represents the total liquid volume sold for each sales line item, expressed in gallons, providing a standardized measure of quantity regardless of bottle size. In the Fact_Sales table it complements bottles_sold and sale_amount to support volume-based revenue analysis (e.g., price per gallon, demand trends) and should align with volume_sold_liters via a consistent unit conversion; because it is always populated, it can be reliably used in aggregations and filters, with a non-negative constraint recommended."
+          },
+          "examples": [
+            "2.38",
+            "0.79",
+            "0.4"
+          ],
+          "key_type": "None",
+          "db_manager_tooltip": "Numeric Operations, Filtering, Ordering, Aggregation (SUM, AVG, COUNT)",
+          "derivative": null,
+          "temporal_logic": null
+        }
+      ],
+      "relationships": [
+        {
+          "relationship_id": "18ad8c67-7b4a-4fe8-8672-bbcff99a204d",
+          "type": "foreign_key",
+          "from_table": "Fact_Sales",
+          "from_column": "store_number",
+          "to_table": "Dim_Store",
+          "to_column": "store_number",
+          "confidence": 1,
+          "source": "schema",
+          "metadata": {
+            "constraint_name": "fk_Fact_Sales_0"
+          }
+        },
+        {
+          "relationship_id": "da46866b-3650-454f-a09d-78d590974350",
+          "type": "foreign_key",
+          "from_table": "Fact_Sales",
+          "from_column": "vendor_number",
+          "to_table": "Dim_Vendor",
+          "to_column": "vendor_number",
+          "confidence": 1,
+          "source": "schema",
+          "metadata": {
+            "constraint_name": "fk_Fact_Sales_1"
+          }
+        },
+        {
+          "relationship_id": "770ca832-338b-48a8-89a6-1f789f3abd88",
+          "type": "foreign_key",
+          "from_table": "Fact_Sales",
+          "from_column": "item_number",
+          "to_table": "Dim_Item",
+          "to_column": "item_number",
+          "confidence": 1,
+          "source": "schema",
+          "metadata": {
+            "constraint_name": "fk_Fact_Sales_2"
+          }
+        }
+      ],
+      "logic_flags": []
+    },
+    {
+      "table_id": "cust-001",
+      "table_name": "Dim_Customer",
+      "table_type": "table",
+      "description": {
+        "description": "Dim_Customer contains improved customer profiles including demographics, loyalty status, and segmentation. Key identifier is customer_id. Used for CRM and personalized marketing analysis."
+      },
+      "row_count": 45000,
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "INTEGER",
+          "is_primary_key": true,
+          "is_foreign_key": false
+        },
+        {
+          "name": "customer_name",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "email",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "segment",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "loyalty_tier",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "inv-001",
+      "table_name": "Fact_Inventory",
+      "table_type": "table",
+      "description": {
+        "description": "Fact_Inventory tracks daily stock levels by store and item. Key metrics include quantity_on_hand and inventory_value. Critical for supply chain optimization and out-of-stock analysis."
+      },
+      "row_count": 850000,
+      "columns": [
+        {
+          "name": "inventory_id",
+          "data_type": "INTEGER",
+          "is_primary_key": true,
+          "is_foreign_key": false
+        },
+        {
+          "name": "store_number",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": true
+        },
+        {
+          "name": "item_number",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": true
+        },
+        {
+          "name": "quantity_on_hand",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "inventory_value",
+          "data_type": "REAL",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "snapshot_date",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "web-001",
+      "table_name": "Fact_Web_Analytics",
+      "table_type": "table",
+      "description": {
+        "description": "Fact_Web_Analytics captures user interaction data from the e-commerce platform. Links to Dim_Customer. Metrics include page_views, session_duration, and cart_additions."
+      },
+      "row_count": 15000000,
+      "columns": [
+        {
+          "name": "session_id",
+          "data_type": "TEXT",
+          "is_primary_key": true,
+          "is_foreign_key": false
+        },
+        {
+          "name": "customer_id",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": true
+        },
+        {
+          "name": "page_url",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "time_on_page",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "device_type",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    },
+    {
+      "table_id": "emp-001",
+      "table_name": "Dim_Employee",
+      "table_type": "table",
+      "description": {
+        "description": "Dim_Employee details the workforce across retail locations. Used for labor cost analysis and sales performance tracking per employee."
+      },
+      "row_count": 3500,
+      "columns": [
+        {
+          "name": "employee_id",
+          "data_type": "INTEGER",
+          "is_primary_key": true,
+          "is_foreign_key": false
+        },
+        {
+          "name": "store_number",
+          "data_type": "INTEGER",
+          "is_primary_key": false,
+          "is_foreign_key": true
+        },
+        {
+          "name": "full_name",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "role",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        },
+        {
+          "name": "hire_date",
+          "data_type": "TEXT",
+          "is_primary_key": false,
+          "is_foreign_key": false
+        }
+      ],
+      "relationships": [],
+      "logic_flags": []
+    }
+  ],
+  "query_patterns": [],
+  "metadata": {},
+  "summary": {
+    "total_tables": 4,
+    "total_columns": 27,
+    "total_rows": 12505384,
+    "total_relationships": 3,
+    "discovered_relationships": 0
+  }
+}

@@ -1,0 +1,551 @@
+{
+    "lastUpdated": "Feb 9, 2026 | 9:47 AM IST",
+    "heroKPIs": [
+        {
+            "id": "business_value",
+            "icon": "💰",
+            "title": "Business Value Generated",
+            "mainValue": "$2.4M",
+            "subtitle": "Total Value Delivered YTD",
+            "change": "+$847K",
+            "changeLabel": "vs Q4 2025",
+            "breakdown": [
+                {
+                    "label": "Time Savings",
+                    "value": "$1.6M",
+                    "percentage": 67,
+                    "color": "emerald"
+                },
+                {
+                    "label": "Faster Decisions",
+                    "value": "$520K",
+                    "percentage": 22,
+                    "color": "cyan"
+                },
+                {
+                    "label": "Error Reduction",
+                    "value": "$280K",
+                    "percentage": 11,
+                    "color": "violet"
+                }
+            ],
+            "sparkline": [
+                1.2,
+                1.4,
+                1.6,
+                1.8,
+                2.0,
+                2.2,
+                2.3,
+                2.4
+            ]
+        },
+        {
+            "id": "decision_velocity",
+            "icon": "⚡",
+            "title": "Decision Velocity",
+            "mainValue": "83% Faster",
+            "subtitle": "Time from Question → Insight",
+            "metrics": [
+                {
+                    "label": "Before Envoy",
+                    "value": "4.2 days",
+                    "type": "before"
+                },
+                {
+                    "label": "With Envoy",
+                    "value": "0.7 days",
+                    "type": "after"
+                },
+                {
+                    "label": "Improvement",
+                    "value": "-3.5 days",
+                    "type": "improvement"
+                }
+            ]
+        },
+        {
+            "id": "platform_adoption",
+            "icon": "👥",
+            "title": "Platform Adoption",
+            "mainValue": "847",
+            "subtitle": "Active Users Across 12 Departments",
+            "metrics": [
+                {
+                    "label": "Daily Active",
+                    "value": "623",
+                    "percentage": 74
+                },
+                {
+                    "label": "Weekly Active",
+                    "value": "789",
+                    "percentage": 93
+                },
+                {
+                    "label": "Adoption Rate",
+                    "value": "+18% MoM",
+                    "trend": "up"
+                }
+            ]
+        },
+        {
+            "id": "ai_accuracy",
+            "icon": "✓",
+            "title": "AI Accuracy & Trust",
+            "mainValue": "94.2%",
+            "subtitle": "Query Success Rate",
+            "metrics": [
+                {
+                    "label": "High Confidence (>90%)",
+                    "value": "78%",
+                    "status": "success"
+                },
+                {
+                    "label": "Needs Review (<85%)",
+                    "value": "6%",
+                    "status": "warning"
+                },
+                {
+                    "label": "User Satisfaction",
+                    "value": "4.6/5.0",
+                    "status": "excellent"
+                }
+            ]
+        }
+    ],
+    "aiNarrative": {
+        "title": "Platform Intelligence Summary",
+        "generated": "Generated Feb 9, 2026",
+        "summary": "Your Envoy platform has achieved **breakthrough adoption** this month, with **847 active users** generating **$2.4M** in measurable business value across Sales, Supply Chain, and Marketing analytics.",
+        "achievements": [
+            "**Sales Analytics team** reduced monthly reporting cycle from **12 days to 2 days**, enabling faster promotional decisions during peak season",
+            "**Supply Chain** identified **$340K in excess inventory** through automated anomaly detection, preventing 15% markdown",
+            "**Marketing** optimized trade promotion spend with **23% better ROI** prediction accuracy"
+        ],
+        "attentionAreas": [
+            "Inventory Management module showing 12% lower adoption than expected - recommend targeted training",
+            "Complex multi-table queries averaging 4.2s response time vs 2.1s target - optimization in progress"
+        ],
+        "opportunities": [
+            "Customer Segmentation use case ready for expansion to 3 additional regions",
+            "**127 'power users'** (>50 queries/week) identified as change champions for peer training",
+            "Predictive analytics showing **89% accuracy** on demand forecasting - ready for production deployment"
+        ]
+    },
+    "impactVisualizations": {
+        "adoptionMomentum": {
+            "userGrowth": [
+                {
+                    "month": "Sep 2025",
+                    "users": 147,
+                    "queriesPerUser": 8.3
+                },
+                {
+                    "month": "Oct 2025",
+                    "users": 289,
+                    "queriesPerUser": 12.1
+                },
+                {
+                    "month": "Nov 2025",
+                    "users": 456,
+                    "queriesPerUser": 18.4
+                },
+                {
+                    "month": "Dec 2025",
+                    "users": 612,
+                    "queriesPerUser": 22.7
+                },
+                {
+                    "month": "Jan 2026",
+                    "users": 734,
+                    "queriesPerUser": 26.2
+                },
+                {
+                    "month": "Feb 2026",
+                    "users": 847,
+                    "queriesPerUser": 28.7
+                }
+            ],
+            "milestones": [
+                {
+                    "date": "Oct 15",
+                    "label": "Sales Team Rollout"
+                },
+                {
+                    "date": "Nov 3",
+                    "label": "Holiday Season Surge"
+                },
+                {
+                    "date": "Dec 10",
+                    "label": "Executive Training"
+                },
+                {
+                    "date": "Jan 20",
+                    "label": "Mobile Access Launched"
+                }
+            ],
+            "departmentAdoption": [
+                {
+                    "dept": "Sales & Revenue",
+                    "adoption": 92,
+                    "target": 85,
+                    "status": "exceeding"
+                },
+                {
+                    "dept": "Supply Chain",
+                    "adoption": 87,
+                    "target": 80,
+                    "status": "exceeding"
+                },
+                {
+                    "dept": "Marketing & Trade",
+                    "adoption": 76,
+                    "target": 75,
+                    "status": "on-target"
+                },
+                {
+                    "dept": "Finance & Analytics",
+                    "adoption": 68,
+                    "target": 70,
+                    "status": "near-target"
+                },
+                {
+                    "dept": "Category Management",
+                    "adoption": 54,
+                    "target": 65,
+                    "status": "below-target"
+                },
+                {
+                    "dept": "Store Operations",
+                    "adoption": 41,
+                    "target": 60,
+                    "status": "attention-needed"
+                }
+            ]
+        },
+        "businessOutcomes": {
+            "valueWaterfall": [
+                {
+                    "category": "Report Automation",
+                    "value": 960000,
+                    "calculation": "340 reports × 18 hours × $165/hr"
+                },
+                {
+                    "category": "Faster Decision Cycles",
+                    "value": 520000,
+                    "calculation": "Decision speed improvements"
+                },
+                {
+                    "category": "Improved Forecast Accuracy",
+                    "value": 380000,
+                    "calculation": "Reduced forecast errors"
+                },
+                {
+                    "category": "Error Reduction",
+                    "value": 280000,
+                    "calculation": "Fewer manual mistakes"
+                },
+                {
+                    "category": "Self-Service Analytics",
+                    "value": 260000,
+                    "calculation": "Reduced BI dependency"
+                }
+            ],
+            "timeToInsight": [
+                {
+                    "useCase": "Sales Performance Review",
+                    "before": 5.2,
+                    "after": 0.6,
+                    "improvement": 88
+                },
+                {
+                    "useCase": "Inventory Exception Analysis",
+                    "before": 3.8,
+                    "after": 0.4,
+                    "improvement": 89
+                },
+                {
+                    "useCase": "Trade Promotion ROI",
+                    "before": 7.1,
+                    "after": 1.2,
+                    "improvement": 83
+                },
+                {
+                    "useCase": "Customer Segmentation",
+                    "before": 2.9,
+                    "after": 0.3,
+                    "improvement": 90
+                }
+            ],
+            "testimonial": {
+                "quote": "We used to wait a week for category performance reports. Now I get answers during my morning coffee.",
+                "author": "Sarah Chen",
+                "title": "VP Category Management"
+            }
+        },
+        "dataQuality": {
+            "accuracyTrend": [
+                {
+                    "date": "Jan 1",
+                    "accuracy": 87.3,
+                    "highConfidence": 65
+                },
+                {
+                    "date": "Jan 15",
+                    "accuracy": 90.1,
+                    "highConfidence": 70
+                },
+                {
+                    "date": "Feb 1",
+                    "accuracy": 93.2,
+                    "highConfidence": 75
+                },
+                {
+                    "date": "Feb 9",
+                    "accuracy": 94.2,
+                    "highConfidence": 78
+                }
+            ],
+            "knowledgeCoverage": [
+                {
+                    "domain": "Sales Analytics",
+                    "coverage": 89,
+                    "queriesPerDay": 340
+                },
+                {
+                    "domain": "Customer Intelligence",
+                    "coverage": 85,
+                    "queriesPerDay": 210
+                },
+                {
+                    "domain": "Inventory Management",
+                    "coverage": 76,
+                    "queriesPerDay": 180
+                },
+                {
+                    "domain": "Trade Promotions",
+                    "coverage": 72,
+                    "queriesPerDay": 95
+                },
+                {
+                    "domain": "Supply Chain",
+                    "coverage": 68,
+                    "queriesPerDay": 130
+                },
+                {
+                    "domain": "Store Performance",
+                    "coverage": 62,
+                    "queriesPerDay": 85
+                }
+            ]
+        }
+    },
+    "strategicInsights": {
+        "competitive": {
+            "title": "How This Compares to Industry Benchmarks",
+            "icon": "🏆",
+            "benchmarks": [
+                {
+                    "metric": "User Adoption Rate",
+                    "yours": "74% daily",
+                    "industryAvg": "23%",
+                    "top10": "62%",
+                    "status": "leader"
+                },
+                {
+                    "metric": "Query Accuracy",
+                    "yours": "94.2%",
+                    "industryAvg": "68%",
+                    "top10": "88%",
+                    "status": "leader"
+                },
+                {
+                    "metric": "Time to Value",
+                    "yours": "6 weeks",
+                    "industryAvg": "16 weeks",
+                    "top10": "10 weeks",
+                    "status": "leader"
+                },
+                {
+                    "metric": "Self-Service Ratio",
+                    "yours": "83%",
+                    "industryAvg": "41%",
+                    "top10": "71%",
+                    "status": "leader"
+                },
+                {
+                    "metric": "ROI (12-month)",
+                    "yours": "340%",
+                    "industryAvg": "180%",
+                    "top10": "280%",
+                    "status": "leader"
+                }
+            ],
+            "sources": "Gartner 2025 NLQ Market Guide, Forrester Wave Q4 2025",
+            "insight": "Your platform's 94.2% accuracy rate places you in the **top 5%** of enterprise NLQ deployments. This is achieved through domain-specific knowledge graphs - a capability most competitors lack."
+        },
+        "governance": {
+            "title": "Enterprise Readiness & Compliance",
+            "icon": "🛡️",
+            "categories": [
+                {
+                    "name": "Data Governance",
+                    "status": "excellent",
+                    "items": [
+                        {
+                            "label": "Row-level security",
+                            "value": "100% coverage",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Audit trail",
+                            "value": "Complete (847K events)",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Data lineage",
+                            "value": "94% traceable",
+                            "status": "success"
+                        },
+                        {
+                            "label": "PII masking",
+                            "value": "Automated enforcement",
+                            "status": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Query Governance",
+                    "status": "strong",
+                    "items": [
+                        {
+                            "label": "Failed query rate",
+                            "value": "2.1% (target <5%)",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Hallucination detection",
+                            "value": "0.3% flagged",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Human-in-loop",
+                            "value": "Active for low confidence",
+                            "status": "info"
+                        },
+                        {
+                            "label": "User feedback",
+                            "value": "89% participation",
+                            "status": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Compliance Status",
+                    "status": "compliant",
+                    "items": [
+                        {
+                            "label": "SOC 2 Type II",
+                            "value": "Certified (Dec 2025)",
+                            "status": "success"
+                        },
+                        {
+                            "label": "GDPR",
+                            "value": "Full compliance",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Access control",
+                            "value": "RBAC + MFA enforced",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Data residency",
+                            "value": "Regional compliance verified",
+                            "status": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Model Performance",
+                    "status": "monitoring",
+                    "items": [
+                        {
+                            "label": "Model drift",
+                            "value": "Within acceptable range",
+                            "status": "info"
+                        },
+                        {
+                            "label": "Retraining cycle",
+                            "value": "Every 14 days",
+                            "status": "info"
+                        },
+                        {
+                            "label": "A/B test results",
+                            "value": "Variant B +3.2% accuracy",
+                            "status": "success"
+                        },
+                        {
+                            "label": "Next optimization",
+                            "value": "Feb 15, 2026",
+                            "status": "info"
+                        }
+                    ]
+                }
+            ]
+        },
+        "scalability": {
+            "title": "Growth Trajectory & Investment Roadmap",
+            "icon": "📊",
+            "currentState": [
+                "3 databases connected (Sales, Inventory, Customer)",
+                "847 active users across 6 departments",
+                "12,400 queries/week",
+                "94.2% accuracy rate"
+            ],
+            "nearTerm": {
+                "timeline": "Q1-Q2 2026",
+                "goals": [
+                    "+5 databases (Finance, Marketing, Supply Chain, Store Ops, E-commerce)",
+                    "Target: 2,500 users across all business functions",
+                    "Projected: 45,000 queries/week",
+                    "Investment: Semantic layer expansion + infrastructure scaling"
+                ]
+            },
+            "strategicVision": {
+                "timeline": "2026-2027",
+                "capabilities": [
+                    "Predictive analytics (demand forecasting, price optimization)",
+                    "Agentic workflows (autonomous insight delivery)",
+                    "Embedded analytics (NLQ in SAP, Salesforce)",
+                    "Industry template marketplace"
+                ],
+                "outcomes": [
+                    "4x user base expansion",
+                    "$9.2M annual value delivery (3.8x current)",
+                    "30% reduction in BI developer dependency",
+                    "Enterprise-wide 'insight democratization'"
+                ]
+            },
+            "investment": {
+                "phase1": {
+                    "name": "Expansion",
+                    "cost": "$280K",
+                    "items": "Infrastructure + 2 FTEs"
+                },
+                "phase2": {
+                    "name": "Predictive",
+                    "cost": "$450K",
+                    "items": "ML ops + domain experts"
+                },
+                "phase3": {
+                    "name": "Agentic",
+                    "cost": "$620K",
+                    "items": "R&D + change management"
+                },
+                "total": "$1.35M over 18 months",
+                "expectedROI": "580% by end of 2027"
+            }
+        }
+    }
+}

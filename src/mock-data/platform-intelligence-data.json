@@ -1,0 +1,447 @@
+{
+    "platformHealth": {
+        "uptime": {
+            "value": "99.94%",
+            "detail": "43.8 days",
+            "trend": "stable"
+        },
+        "avgResponseTime": {
+            "value": "2.1s",
+            "detail": "↓ 0.3s vs target",
+            "trend": "down"
+        },
+        "cacheHitRate": {
+            "value": "67.3%",
+            "detail": "↑ 12% vs last month",
+            "trend": "up"
+        },
+        "concurrentUsers": {
+            "value": "142",
+            "detail": "peak: 287",
+            "capacity": "1,000+"
+        },
+        "apiRequestVolume": {
+            "value": "18,400",
+            "detail": "↑ 23% vs yesterday",
+            "trend": "up"
+        },
+        "errorRate": {
+            "value": "1.8%",
+            "detail": "↓ 0.4% vs target",
+            "trend": "down"
+        },
+        "dbConnections": {
+            "value": "3/10",
+            "detail": "All healthy ✓",
+            "status": "healthy"
+        },
+        "modelInfo": {
+            "value": "Claude 4.5 Sonnet",
+            "detail": "Avg latency: 890ms",
+            "status": "active"
+        },
+        "storageUsed": {
+            "value": "847 GB / 5 TB",
+            "detail": "17% utilized",
+            "status": "good"
+        }
+    },
+    "databases": [
+        {
+            "name": "Sales DW",
+            "type": "Snowflake",
+            "status": "active",
+            "queriesPerDay": 5240,
+            "avgResponse": "1.8s",
+            "coverage": 89,
+            "details": {
+                "tables": 47,
+                "columns": 380,
+                "rows": "12.4M",
+                "lastSync": "2 min ago",
+                "entities": 127,
+                "relationships": 284,
+                "businessRules": 1840
+            }
+        },
+        {
+            "name": "Inventory DB",
+            "type": "PostgreSQL",
+            "status": "active",
+            "queriesPerDay": 2180,
+            "avgResponse": "2.4s",
+            "coverage": 76,
+            "details": {
+                "tables": 28,
+                "columns": 210,
+                "rows": "8.7M",
+                "lastSync": "5 min ago",
+                "entities": 89,
+                "relationships": 156,
+                "businessRules": 1120
+            }
+        },
+        {
+            "name": "Customer 360",
+            "type": "BigQuery",
+            "status": "active",
+            "queriesPerDay": 3620,
+            "avgResponse": "1.6s",
+            "coverage": 85,
+            "details": {
+                "tables": 35,
+                "columns": 290,
+                "rows": "15.2M",
+                "lastSync": "1 min ago",
+                "entities": 112,
+                "relationships": 231,
+                "businessRules": 1540
+            }
+        },
+        {
+            "name": "Finance ERP",
+            "type": "Oracle",
+            "status": "config",
+            "queriesPerDay": 0,
+            "avgResponse": "-",
+            "coverage": 34,
+            "details": null
+        },
+        {
+            "name": "Marketing Hub",
+            "type": "MongoDB",
+            "status": "planned",
+            "queriesPerDay": 0,
+            "avgResponse": "-",
+            "coverage": 0,
+            "details": null
+        }
+    ],
+    "semanticLayer": {
+        "entitiesMapped": {
+            "current": 127,
+            "total": 150,
+            "percentage": 85
+        },
+        "relationships": 284,
+        "businessRules": 1840,
+        "synonymMappings": 3450,
+        "kpiDefinitions": 89,
+        "customCalculations": 167,
+        "quality": {
+            "schemaCoverage": 89,
+            "metadataCompleteness": 91,
+            "businessContext": 87,
+            "autoDescriptions": 94
+        }
+    },
+    "queryProcessing": {
+        "funnel": [
+            {
+                "stage": "Total Queries Submitted",
+                "count": 12400,
+                "percentage": 100
+            },
+            {
+                "stage": "Successfully Parsed",
+                "count": 12146,
+                "percentage": 97.9
+            },
+            {
+                "stage": "SQL Generated",
+                "count": 11923,
+                "percentage": 98.2
+            },
+            {
+                "stage": "Executed Successfully",
+                "count": 11702,
+                "percentage": 98.1
+            },
+            {
+                "stage": "Results Returned",
+                "count": 11702,
+                "percentage": 100
+            },
+            {
+                "stage": "User Validated",
+                "count": 10387,
+                "percentage": 88.8
+            }
+        ],
+        "failurePatterns": [
+            {
+                "type": "Ambiguous time references",
+                "percentage": 34,
+                "example": "\"last quarter\" without fiscal year context"
+            },
+            {
+                "type": "Unknown entity mentions",
+                "percentage": 28,
+                "example": "Product names not in catalog"
+            },
+            {
+                "type": "Complex multi-step logic",
+                "percentage": 21,
+                "example": "Requires decomposition"
+            },
+            {
+                "type": "Domain-specific jargon",
+                "percentage": 17,
+                "example": "Not in synonym mapping"
+            }
+        ]
+    },
+    "agentPerformance": [
+        {
+            "name": "Query Parser",
+            "avgTime": "0.12s",
+            "successRate": 97.9,
+            "confidence": 94.2,
+            "risk": "Low"
+        },
+        {
+            "name": "Entity Extractor",
+            "avgTime": "0.08s",
+            "successRate": 95.6,
+            "confidence": 91.8,
+            "risk": "Low"
+        },
+        {
+            "name": "SQL Translator",
+            "avgTime": "0.34s",
+            "successRate": 98.2,
+            "confidence": 96.1,
+            "risk": "Low"
+        },
+        {
+            "name": "Data Retriever",
+            "avgTime": "1.23s",
+            "successRate": 98.1,
+            "confidence": null,
+            "risk": "Medium",
+            "note": "Large table scans causing occasional slowness"
+        },
+        {
+            "name": "Viz Generator",
+            "avgTime": "0.18s",
+            "successRate": 99.4,
+            "confidence": 88.3,
+            "risk": "Low"
+        },
+        {
+            "name": "Insight Synthesizer",
+            "avgTime": "0.42s",
+            "successRate": 96.7,
+            "confidence": 89.5,
+            "risk": "Low"
+        }
+    ],
+    "userSegmentation": {
+        "powerUsers": {
+            "count": 127,
+            "percentage": 15,
+            "avgQueries": 78,
+            "successRate": 96.2,
+            "useCases": "Ad-hoc analysis, executive reporting",
+            "valueContribution": 48
+        },
+        "regularUsers": {
+            "count": 423,
+            "percentage": 50,
+            "avgQueries": 24,
+            "successRate": 92.1,
+            "useCases": "Routine reporting, performance tracking",
+            "valueContribution": 41
+        },
+        "casualUsers": {
+            "count": 297,
+            "percentage": 35,
+            "avgQueries": 4,
+            "successRate": 86.3,
+            "useCases": "Exploratory, one-off questions",
+            "valueContribution": 11
+        }
+    },
+    "valuableQueries": [
+        {
+            "rank": 1,
+            "pattern": "Weekly sales by category and region",
+            "frequency": 284,
+            "avgValue": "$1,240",
+            "totalImpact": "$352K/year"
+        },
+        {
+            "rank": 2,
+            "pattern": "Slow-moving inventory >90 days",
+            "frequency": 156,
+            "avgValue": "$1,890",
+            "totalImpact": "$295K/year"
+        },
+        {
+            "rank": 3,
+            "pattern": "Trade promotion ROI by brand",
+            "frequency": 127,
+            "avgValue": "$2,140",
+            "totalImpact": "$272K/year"
+        },
+        {
+            "rank": 4,
+            "pattern": "Customer segment purchase patterns",
+            "frequency": 198,
+            "avgValue": "$980",
+            "totalImpact": "$194K/year"
+        },
+        {
+            "rank": 5,
+            "pattern": "Out-of-stock impact on revenue",
+            "frequency": 89,
+            "avgValue": "$1,760",
+            "totalImpact": "$157K/year"
+        }
+    ],
+    "accessControl": {
+        "roles": [
+            "Executives",
+            "Sales Leaders",
+            "Supply Chain",
+            "Finance",
+            "Marketing",
+            "Store Ops"
+        ],
+        "databases": [
+            "Sales DW",
+            "Inventory",
+            "Customer360",
+            "Finance",
+            "Marketing"
+        ],
+        "matrix": [
+            [
+                "Full",
+                "Full",
+                "Full",
+                "Full",
+                "Full"
+            ],
+            [
+                "Full",
+                "Read",
+                "Full",
+                "Summary",
+                "Read"
+            ],
+            [
+                "Summary",
+                "Full",
+                "Summary",
+                "Read",
+                "-"
+            ],
+            [
+                "Full",
+                "Read",
+                "Summary",
+                "Full",
+                "Read"
+            ],
+            [
+                "Summary",
+                "-",
+                "Full",
+                "Summary",
+                "Full"
+            ],
+            [
+                "Read",
+                "Read",
+                "Summary",
+                "-",
+                "-"
+            ]
+        ]
+    },
+    "auditLog": [
+        {
+            "timestamp": "Feb 9, 9:42 AM",
+            "user": "sarah.chen@company.com",
+            "eventType": "Query Executed",
+            "details": "Q4 sales by SKU top 100",
+            "severity": "Info"
+        },
+        {
+            "timestamp": "Feb 9, 9:38 AM",
+            "user": "mike.patel@company.com",
+            "eventType": "High-Value Alert",
+            "details": "Query value >$5K flagged",
+            "severity": "Warning"
+        },
+        {
+            "timestamp": "Feb 9, 9:35 AM",
+            "user": "admin",
+            "eventType": "Access Granted",
+            "details": "New user onboarded: jane.doe",
+            "severity": "Info"
+        },
+        {
+            "timestamp": "Feb 9, 9:30 AM",
+            "user": "system",
+            "eventType": "Performance Alert",
+            "details": "Response time >5s on query #4782",
+            "severity": "Warning"
+        },
+        {
+            "timestamp": "Feb 9, 9:15 AM",
+            "user": "john.smith@company.com",
+            "eventType": "Failed Access",
+            "details": "Attempted Finance DB without permission",
+            "severity": "Alert"
+        }
+    ],
+    "optimizations": [
+        {
+            "priority": "HIGH",
+            "title": "Semantic Layer Gap - Store Operations Domain",
+            "issue": "Only 62% coverage causing 34% of failed queries from Store Ops team",
+            "impact": "$47K/month in lost productivity",
+            "recommendation": "Add 23 missing entities (store formats, traffic patterns, labor scheduling)",
+            "effort": "2 weeks",
+            "roi": "$564K annually"
+        },
+        {
+            "priority": "HIGH",
+            "title": "Query Performance - Large Table Scans",
+            "issue": "12% of queries on Inventory DB taking >5s due to missing indexes",
+            "impact": "User frustration, reduced adoption",
+            "recommendation": "Add composite indexes on [product_id, location_id, date]",
+            "effort": "1 day",
+            "roi": "78% performance improvement"
+        },
+        {
+            "priority": "MEDIUM",
+            "title": "User Training Gap - Finance Department",
+            "issue": "68% adoption vs 85% target, high failed query rate (14%)",
+            "impact": "$23K/month in unrealized value",
+            "recommendation": "Department-specific training + curated question library",
+            "effort": "2 weeks",
+            "roi": "+17% adoption lift"
+        },
+        {
+            "priority": "MEDIUM",
+            "title": "Knowledge Graph Enhancement - Product Hierarchy",
+            "issue": "18% of queries fail to correctly navigate category → subcategory → SKU",
+            "impact": "Incorrect aggregations in category analysis",
+            "recommendation": "Refine product taxonomy with subject matter expert review",
+            "effort": "1 week",
+            "roi": "+4.2% accuracy improvement"
+        },
+        {
+            "priority": "LOW",
+            "title": "Visualization Variety",
+            "issue": "89% of charts are bar/line, users requesting more diversity",
+            "impact": "Engagement opportunity",
+            "recommendation": "Add treemap, sankey, sunburst chart options",
+            "effort": "1 week",
+            "roi": "+0.3 user satisfaction lift"
+        }
+    ]
+}
