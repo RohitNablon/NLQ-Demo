@@ -23,7 +23,8 @@
         "category": "Sales",
         "complexity": "advanced",
         "database": "retail-sales-wh",
-        "icon": "📉"
+        "icon": "📉",
+        "workflowId": "q3"
     },
     {
         "id": 4,
@@ -31,7 +32,8 @@
         "category": "Sales",
         "complexity": "advanced",
         "database": "retail-sales-wh",
-        "icon": "🎯"
+        "icon": "🎯",
+        "workflowId": "q4"
     },
     {
         "id": 5,
@@ -39,7 +41,8 @@
         "category": "Sales",
         "complexity": "advanced",
         "database": "retail-sales-wh",
-        "icon": "⚠️"
+        "icon": "⚠️",
+        "workflowId": "q5"
     },
     {
         "id": 6,

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Send, Trash2, Loader2, Sparkles, User, Bot, ArrowRight, HelpCircle, ChevronDown, ChevronRight, CheckCircle2, Circle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 import curatedQuestions from '../mock-data/curated-questions.json';
 import workflows from '../mock-data/workflows.json';
 import { cn } from '../lib/utils';
@@ -75,7 +76,7 @@ function ThinkingProcessHistoryItem({ steps }) {
 /**
  * Premium Chat Interface
  */
-export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecutionState, resetExecution }) {
+export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecutionState, resetExecution, initialQuestion }) {
     const [messages, setMessages] = useState([]);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -90,6 +91,14 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading, thinkingSteps, isThinkingOpen]);
+
+    // Handle Initial Question (Deep Link)
+    useEffect(() => {
+        if (initialQuestion && initialQuestion.trim() !== '') {
+            // setQuery(initialQuestion); // Optional: if you want it in the input
+            processQuery(initialQuestion);
+        }
+    }, [initialQuestion]);
 
     // Initial Welcome Message & Suggestions
     useEffect(() => {
@@ -117,11 +126,9 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
         if (resetExecution) resetExecution();
     };
 
-    const handleSubmit = async (e) => {
-        e?.preventDefault();
-        if (!query.trim() || loading) return;
+    const processQuery = async (userQuery) => {
+        if (!userQuery.trim() || loading) return;
 
-        const userQuery = query.trim();
         setQuery('');
 
         // 1. Add User Message
@@ -140,11 +147,21 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
 
         // 2. Find Workflow Match
         const curatedForDb = curatedQuestions.filter(q => q.database === dbInfo?.id);
-        const match = findCuratedQuestion(userQuery, curatedForDb);
+        let match = findCuratedQuestion(userQuery, curatedForDb);
+        let workflow = null;
 
         if (match && match.workflowId) {
-            const workflow = workflows[dbInfo.id]?.[match.workflowId];
+            workflow = workflows[dbInfo.id]?.[match.workflowId];
+        }
 
+        // 2.5 If no curated match, check workflows.json directly (for follow-ups)
+        if (!workflow && workflows[dbInfo.id]) {
+            const allWorkflows = Object.values(workflows[dbInfo.id]);
+            workflow = findWorkflowByQuestion(userQuery, allWorkflows);
+        }
+
+        if (workflow) {
+            console.log('Workflow found:', workflow);
             if (workflow) {
                 // 3. Start Workflow Visualization (Graph)
                 if (onWorkflowStart) onWorkflowStart(workflow);
@@ -158,6 +175,7 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
                     content: workflow.answer,
                     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     followUps: workflow.followUp || [],
+                    chart: workflow.chart, // Pass chart data
                     thinkingSteps: completedSteps // Attach the finished steps
                 };
                 setMessages(prev => [...prev, assistantResponse]);
@@ -166,6 +184,7 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
             }
         } else {
             // Fallback Logic
+            console.log('No workflow match. Using fallback.');
             // Init fallback steps
             const fallbackAgents = [
                 { id: 'intent', name: 'Intent Classifier', type: 'system' },
@@ -187,16 +206,36 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
         setThinkingSteps([]); // Clear temporary steps
     };
 
+    const handleSubmit = (e) => {
+        e?.preventDefault();
+        processQuery(query);
+    };
+
+    // Helper: Find Workflow directly
+    const findWorkflowByQuestion = (query, workflowList) => {
+        const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+        const normalizedQuery = normalize(query);
+
+        return workflowList.find(w => {
+            if (!w.question) return false;
+            const normalizedQ = normalize(w.question);
+            return normalizedQ === normalizedQuery || normalizedQ.includes(normalizedQuery) || normalizedQuery.includes(normalizedQ);
+        });
+    };
+
     // Helper: Find Question
     const findCuratedQuestion = (query, questions) => {
-        const normalized = query.toLowerCase().trim();
-        // Exact
-        let match = questions.find(q => q.question.toLowerCase() === normalized);
+        const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+        const normalizedQuery = normalize(query);
+
+        // Exact (Normalized)
+        let match = questions.find(q => normalize(q.question) === normalizedQuery);
+
         // Fuzzy
         if (!match) {
             match = questions.find(q => {
-                const qWords = q.question.toLowerCase().split(' ');
-                const uWords = normalized.split(' ');
+                const qWords = normalize(q.question).split(/\s+/);
+                const uWords = normalizedQuery.split(/\s+/);
                 const hits = uWords.filter(w => qWords.some(qw => qw.includes(w))).length;
                 return (hits / uWords.length) > 0.6;
             });
@@ -266,12 +305,8 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
     };
 
     const handleSuggestionClick = (text) => {
-        setQuery(text);
-        // Auto-submit hack
-        setTimeout(() => {
-            const btn = document.querySelector('form.chat-form button[type="submit"]');
-            btn?.click();
-        }, 100);
+        setQuery(text); // Visual update
+        setTimeout(() => processQuery(text), 0); // Trigger processing
     };
 
     return (
@@ -322,11 +357,144 @@ export default function ChatInterface({ dbInfo, onWorkflowStart, updateExecution
                                         p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
                                         strong: ({ node, ...props }) => <span className="font-semibold text-white" {...props} />,
                                         ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2 space-y-1" {...props} />,
-                                        li: ({ node, ...props }) => <li className="marker:text-gray-500" {...props} />
+                                        li: ({ node, ...props }) => <li className="marker:text-gray-500" {...props} />,
+                                        table: ({ node, ...props }) => <div className="overflow-x-auto my-4 rounded-lg border border-white/10 shadow-lg"><table className="w-full text-sm text-left border-collapse" {...props} /></div>,
+                                        thead: ({ node, ...props }) => <thead className="bg-white/5 text-gray-400 uppercase text-xs tracking-wider" {...props} />,
+                                        tbody: ({ node, ...props }) => <tbody className="divide-y divide-white/5" {...props} />,
+                                        tr: ({ node, ...props }) => <tr className="hover:bg-white/5 transition-colors duration-150" {...props} />,
+                                        th: ({ node, ...props }) => <th className="px-4 py-3 font-medium text-gray-300 border-b border-white/10" {...props} />,
+                                        td: ({ node, ...props }) => <td className="px-4 py-3 text-gray-300 border-b border-white/5" {...props} />,
                                     }}
                                 >
                                     {msg.content}
                                 </ReactMarkdown>
+
+                                {/* Dynamic Chart Rendering */}
+                                {msg.chart && (
+                                    <div className="mt-6 mb-2">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                                                {msg.chart.title}
+                                            </h4>
+                                        </div>
+                                        <div className="h-64 w-full bg-black/20 rounded-xl border border-white/5 p-4 mx-auto">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                {msg.chart.type === 'line' ? (
+                                                    <LineChart data={msg.chart.data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                                        <XAxis
+                                                            dataKey={msg.chart.xAxisKey}
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <YAxis
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tickFormatter={(value) => value >= 1000 ? `$${value / 1000}k` : value}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <Tooltip
+                                                            contentStyle={{ backgroundColor: '#18181b', borderColor: '#333', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                            itemStyle={{ color: '#e5e7eb', fontSize: '12px' }}
+                                                            cursor={{ stroke: '#ffffff20' }}
+                                                        />
+                                                        <Line
+                                                            type="monotone"
+                                                            dataKey={msg.chart.seriesKey}
+                                                            stroke="#8b5cf6"
+                                                            strokeWidth={3}
+                                                            dot={{ fill: '#8b5cf6', strokeWidth: 0, r: 4 }}
+                                                            activeDot={{ r: 6, fill: '#fff' }}
+                                                            animationDuration={1500}
+                                                        />
+                                                    </LineChart>
+                                                ) : msg.chart.type === 'area' ? (
+                                                    <AreaChart data={msg.chart.data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                        <defs>
+                                                            <linearGradient id="colorArea" x1="0" y1="0" x2="0" y2="1">
+                                                                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                                                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                                            </linearGradient>
+                                                        </defs>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                                        <XAxis
+                                                            dataKey={msg.chart.xAxisKey}
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <YAxis
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tickFormatter={(value) => value >= 1000 ? `$${value / 1000}k` : value}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <Tooltip
+                                                            contentStyle={{ backgroundColor: '#18181b', borderColor: '#333', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                            itemStyle={{ color: '#e5e7eb', fontSize: '12px' }}
+                                                            cursor={{ stroke: '#ffffff20' }}
+                                                        />
+                                                        <Area
+                                                            type="monotone"
+                                                            dataKey={msg.chart.seriesKey}
+                                                            stroke="#8b5cf6"
+                                                            fillOpacity={1}
+                                                            fill="url(#colorArea)"
+                                                            strokeWidth={3}
+                                                            animationDuration={1500}
+                                                        />
+                                                    </AreaChart>
+                                                ) : (
+                                                    <BarChart data={msg.chart.data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                                        <XAxis
+                                                            dataKey={msg.chart.xAxisKey}
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <YAxis
+                                                            stroke="#666"
+                                                            fontSize={10}
+                                                            tickLine={false}
+                                                            axisLine={false}
+                                                            tickFormatter={(value) => value >= 1000 ? `$${value / 1000}k` : value}
+                                                            tick={{ fill: '#9ca3af' }}
+                                                        />
+                                                        <Tooltip
+                                                            contentStyle={{ backgroundColor: '#18181b', borderColor: '#333', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                            itemStyle={{ color: '#e5e7eb', fontSize: '12px' }}
+                                                            cursor={{ fill: '#ffffff05' }}
+                                                        />
+                                                        <Bar
+                                                            dataKey={msg.chart.seriesKey}
+                                                            fill="#8b5cf6"
+                                                            radius={[4, 4, 0, 0]}
+                                                            barSize={30}
+                                                            animationDuration={1500}
+                                                        >
+                                                            {msg.chart.data.map((entry, index) => (
+                                                                <Cell key={`cell-${index}`} fill={index < 3 ? '#8b5cf6' : '#6366f1'} />
+                                                            ))}
+                                                        </Bar>
+                                                    </BarChart>
+                                                )}
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Suggestions / Follow-ups */}

@@ -12,6 +12,8 @@ import { ReactFlowProvider } from 'reactflow';
  * Tab 2: Deep Dive (Chat + Network Graph)
  */
 export default function InsightsContainer({ dbInfo, onNavigate }) {
+    const [activeTab, setActiveTab] = useState("insights");
+    const [selectedQuestion, setSelectedQuestion] = useState("");
     const [currentWorkflow, setCurrentWorkflow] = useState(null);
     const { executionState, updateExecutionState, reset } = useExecutionTracker();
 
@@ -22,6 +24,10 @@ export default function InsightsContainer({ dbInfo, onNavigate }) {
 
     const handleQuestionSelect = (question) => {
         console.log('Question selected from Insights:', question);
+        if (question) {
+            setSelectedQuestion(question);
+            setActiveTab("deepdive");
+        }
     };
 
     return (
@@ -42,7 +48,7 @@ export default function InsightsContainer({ dbInfo, onNavigate }) {
             </div>
 
             {/* Tabbed Content - Premium Styling */}
-            <Tabs defaultValue="insights" className="flex-1 flex flex-col min-h-0">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
                 <div className="px-6 pt-3 pb-2 flex-shrink-0">
                     <TabsList className="bg-white/5 border border-white/10 p-1 rounded-lg">
                         <TabsTrigger
@@ -79,6 +85,7 @@ export default function InsightsContainer({ dbInfo, onNavigate }) {
                                 onWorkflowStart={handleWorkflowStart}
                                 updateExecutionState={updateExecutionState}
                                 resetExecution={reset}
+                                initialQuestion={selectedQuestion}
                             />
                         </div>
 

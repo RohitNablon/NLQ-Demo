@@ -214,7 +214,7 @@ function AnalyticsDashboard({ dbInfo, onQuestionSelect, onNavigate }) {
                                 <BarChart data={insights.topProducts.data} layout="vertical">
                                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                                     <XAxis type="number" stroke="#9ca3af" fontSize={12} />
-                                    <YAxis dataKey="name" type="category" stroke="#9ca3af" fontSize={12} width={100} />
+                                    <YAxis dataKey="product" type="category" stroke="#9ca3af" fontSize={12} width={100} />
                                     <Tooltip
                                         contentStyle={{ backgroundColor: '#18181b', border: '1px solid #ffffff20', borderRadius: '8px' }}
                                     />
@@ -238,7 +238,7 @@ function AnalyticsDashboard({ dbInfo, onQuestionSelect, onNavigate }) {
                                         label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
                                         outerRadius={80}
                                         fill="#8884d8"
-                                        dataKey="revenue"
+                                        dataKey="sales"
                                     >
                                         {insights.regionalSales.data.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

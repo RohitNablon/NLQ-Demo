@@ -56,12 +56,12 @@ export default function SimpleNetworkGraph({ workflow, executionState }) {
         }
 
         // Create nodes with execution status
-        const newNodes = workflow.agents.map((agent) => ({
+        const newNodes = workflow.agents.map((agent, idx) => ({
             id: agent.id,
             type: 'agent',
             position: {
-                x: agent.position[0] * 250,
-                y: agent.position[1] * 180,
+                x: (agent.position ? agent.position[0] : 0) * 250,
+                y: (agent.position ? agent.position[1] : idx * 1) * 180, // Fallback vertical stack
             },
             data: {
                 label: agent.name,

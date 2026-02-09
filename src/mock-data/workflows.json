@@ -404,12 +404,12 @@
                 "Analyze churn rate for multi-category buyers"
             ]
         },
-        "q9": {
-            "question": "Who are my top 10 customers by lifetime value?",
+        "q3": {
+            "question": "Which customer segments show declining lifetime value despite increasing purchase frequency?",
             "agents": [
                 {
-                    "id": "intent_agent",
-                    "name": "Intent Agent",
+                    "id": "intent",
+                    "name": "Intent Classifier",
                     "type": "understanding",
                     "position": [
                         0,
@@ -420,39 +420,486 @@
                 },
                 {
                     "id": "supervisor",
-                    "name": "Supervisor Agent",
+                    "name": "Supervisor",
                     "type": "orchestration",
                     "position": [
                         0,
                         1
                     ],
-                    "duration": 0.2,
+                    "duration": 0.3,
                     "icon": "Cpu"
                 },
                 {
-                    "id": "compliance_pii",
-                    "name": "Compliance - PII/RBAC",
+                    "id": "cohort",
+                    "name": "Cohort Analyzer",
+                    "type": "processing",
+                    "position": [
+                        -1,
+                        2
+                    ],
+                    "duration": 0.8,
+                    "icon": "Users"
+                },
+                {
+                    "id": "churn",
+                    "name": "Churn Predictor",
+                    "type": "validation",
+                    "position": [
+                        1,
+                        2
+                    ],
+                    "duration": 0.9,
+                    "icon": "Activity"
+                },
+                {
+                    "id": "segmentation",
+                    "name": "Segmentation Engine",
+                    "type": "context",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 0.6,
+                    "icon": "PieChart"
+                },
+                {
+                    "id": "data",
+                    "name": "Data Retrieval",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4
+                    ],
+                    "duration": 1.2,
+                    "icon": "Download"
+                },
+                {
+                    "id": "viz",
+                    "name": "Visualization",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5
+                    ],
+                    "duration": 0.5,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "cortex",
+                    "name": "Cortex AI",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6
+                    ],
+                    "duration": 0.4,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "cohort"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "churn"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "segmentation"
+                },
+                {
+                    "source": "cohort",
+                    "target": "segmentation"
+                },
+                {
+                    "source": "churn",
+                    "target": "segmentation"
+                },
+                {
+                    "source": "segmentation",
+                    "target": "data"
+                },
+                {
+                    "source": "data",
+                    "target": "viz"
+                },
+                {
+                    "source": "viz",
+                    "target": "cortex"
+                }
+            ],
+            "answer": "**Customer Value Divergence Analysis**\n\n### 🚨 Critical Alert: 'Budget' & 'New' Segments\nWhile purchase frequency is up, we are seeing a massive value erosion in specific cohorts.\n\n### Key Findings:\n- **Budget Segment**: Purchase frequency **+15%**, but AOV **-22%**.\n- **New Customers**: **45% churn rate** specifically after the 2nd purchase.\n\n### Root Cause Analysis:\n- **Discount Dependency**: 78% of recent budget transactions used coupons >20%.\n- **Low-Margin Mix**: Shift towards accessory items vs core product lines.\n\n### Financial Impact:\n- **Projected Annual Loss**: $450,000\n- **Risk Level**: High\n\n*⚠️ Recommendation: Restructure loyalty tier rewards to incentivize basket size over frequency.*",
+            "chart": {
+                "type": "bar",
+                "title": "Segment Performance: Value vs Frequency",
+                "xAxisKey": "segment",
+                "seriesKey": "value_growth",
+                "data": [
+                    {
+                        "segment": "Budget",
+                        "value_growth": -22,
+                        "freq_growth": 15
+                    },
+                    {
+                        "segment": "New",
+                        "value_growth": -12,
+                        "freq_growth": 30
+                    },
+                    {
+                        "segment": "Core",
+                        "value_growth": 5,
+                        "freq_growth": 5
+                    },
+                    {
+                        "segment": "Premium",
+                        "value_growth": 12,
+                        "freq_growth": 8
+                    }
+                ]
+            },
+            "followUp": [
+                "Drill down into 'New' customer churn reasons",
+                "Simulate impact of removing 20% coupons",
+                "Show margin comparison by segment",
+                "Draft email campaign for 'Budget' segment upsell"
+            ]
+        },
+        "q4": {
+            "question": "Detect regional pricing inefficiencies that are impacting competitive positioning",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent Classifier",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.3,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.3,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "scraper",
+                    "name": "Competitor Scraper",
+                    "type": "retrieval",
+                    "position": [
+                        -1.5,
+                        2
+                    ],
+                    "duration": 1.5,
+                    "icon": "Globe"
+                },
+                {
+                    "id": "geo",
+                    "name": "Geo-Spatial Assassin",
+                    "type": "processing",
+                    "position": [
+                        1.5,
+                        2
+                    ],
+                    "duration": 0.9,
+                    "icon": "Map"
+                },
+                {
+                    "id": "margin",
+                    "name": "Margin Optimizer",
+                    "type": "validation",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 1.1,
+                    "icon": "TrendingUp"
+                },
+                {
+                    "id": "data",
+                    "name": "Internal Pricing DB",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4
+                    ],
+                    "duration": 0.8,
+                    "icon": "Database"
+                },
+                {
+                    "id": "viz",
+                    "name": "Visualization",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5
+                    ],
+                    "duration": 0.6,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "cortex",
+                    "name": "Cortex AI",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6
+                    ],
+                    "duration": 0.4,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "scraper"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "geo"
+                },
+                {
+                    "source": "scraper",
+                    "target": "margin"
+                },
+                {
+                    "source": "geo",
+                    "target": "margin"
+                },
+                {
+                    "source": "margin",
+                    "target": "data"
+                },
+                {
+                    "source": "data",
+                    "target": "viz"
+                },
+                {
+                    "source": "viz",
+                    "target": "cortex"
+                }
+            ],
+            "answer": "### 📉 Regional Pricing & Competitiveness Report\n\n**Northwest Region** is significantly underperforming due to aggressive competitor undercutting.\n\n*   **Competitor**: *SmartHome Depot* slashed prices by **15%** on Electronics last week.\n*   **Our Position**: We are currently **12% more expensive** on top-selling items.\n*   **Impact**: **-28%** drop in unit volume for 'Smart Hubs' and 'Security Cameras'.\n\n**Recommendation**: Authorize a temporary **10% price match** campaign for Q1 to regain market share.",
+            "chart": {
+                "type": "line",
+                "title": "Northwest Sales Volume (Last 4 Weeks)",
+                "xAxisKey": "week",
+                "seriesKey": "sales",
+                "data": [
+                    {
+                        "week": "Wk 1",
+                        "sales": 45000
+                    },
+                    {
+                        "week": "Wk 2",
+                        "sales": 42000
+                    },
+                    {
+                        "week": "Wk 3",
+                        "sales": 31000
+                    },
+                    {
+                        "week": "Wk 4",
+                        "sales": 26000
+                    }
+                ]
+            },
+            "followUp": [
+                "Apply recommended price changes to Northwest",
+                "Check inventory levels in Northwest warehouses",
+                "Compare competitor prices for 'Smart Hubs'",
+                "List all affected SKUs"
+            ]
+        },
+        "q5": {
+            "question": "Which premium products had declining sales in Q4 in the Northeast?",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent Classifier",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.3,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.3,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "time",
+                    "name": "Time Series Analyzer",
+                    "type": "processing",
+                    "position": [
+                        -1,
+                        2
+                    ],
+                    "duration": 0.7,
+                    "icon": "Clock"
+                },
+                {
+                    "id": "root",
+                    "name": "Root Cause Analyzer",
+                    "type": "processing",
+                    "position": [
+                        1,
+                        2
+                    ],
+                    "duration": 0.9,
+                    "icon": "Search"
+                },
+                {
+                    "id": "lifecycle",
+                    "name": "Product Lifecycle",
+                    "type": "context",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 0.6,
+                    "icon": "Refresh"
+                },
+                {
+                    "id": "data",
+                    "name": "Sales Data Retrieval",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        4
+                    ],
+                    "duration": 1.2,
+                    "icon": "Download"
+                },
+                {
+                    "id": "viz",
+                    "name": "Visualization",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        5
+                    ],
+                    "duration": 0.6,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "cortex",
+                    "name": "Cortex AI",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6
+                    ],
+                    "duration": 0.4,
+                    "icon": "Bot"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "time"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "root"
+                },
+                {
+                    "source": "time",
+                    "target": "lifecycle"
+                },
+                {
+                    "source": "root",
+                    "target": "lifecycle"
+                },
+                {
+                    "source": "lifecycle",
+                    "target": "data"
+                },
+                {
+                    "source": "data",
+                    "target": "viz"
+                },
+                {
+                    "source": "viz",
+                    "target": "cortex"
+                }
+            ],
+            "answer": "### 📉 Q4 Premium Product Decline (Northeast)\n\n**Executive Summary**: Three key premium SKUs dragged down regional performance by **12%**, primarily driven by competitor pricing and stockouts.\n\n#### 📊 Underperforming SKUs\n| Product Name | YoY Change | Revenue Lost | Primary Cause |\n| :--- | :---: | :---: | :--- |\n| **Espresso Master Pro** | 🔽 -22% | $180k | ⚔️ Price War |\n| **Smart Fridge X1** | 🔽 -15% | $110k | 📦 Stockout |\n| **Designer Mixer** | 🔽 -9% | $50k | 🎨 Trend Shift |\n\n#### 🕵️ Root Cause Drill-Down\n*   **Espresso Master Pro**: Competitor 'BrewKing' launched a clone at **$50 less** on Oct 15th.\n*   **Smart Fridge X1**: 3-week supply chain gap in November cost us peak holiday sales.\n*   **Designer Mixer**: Consumers shifting rapidly from *Gloss* (our stock) to *Matte* finishes.\n\n#### 🚀 Recovery Plan\n1.  **Trade-In Campaign**: Counter BrewKing with a $75 trade-in credit.\n2.  **Inventory Rebalance**: Airlift 500 units of Smart Fridge X1 to NE distribution center.\n\n*Confidence: 96% • AI Analysis: Multi-Factor Attribution*",
+            "followUp": [
+                "Show inventory levels for Smart Fridge X1",
+                "Analyze 'BrewKing' marketing spend",
+                "Simulate impact of Trade-In campaign",
+                "List all Matte finish products"
+            ]
+        },
+        "q9": {
+            "question": "Who are my top 10 customers by lifetime value?",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent Classifier",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.3,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.3,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "compliance",
+                    "name": "Compliance (PII/RBAC)",
                     "type": "validation",
                     "position": [
                         1.5,
                         1.5
                     ],
                     "duration": 0.4,
-                    "icon": "User"
+                    "icon": "ShieldHash"
                 },
                 {
-                    "id": "query_decomposition",
-                    "name": "Query Decomposition",
-                    "type": "processing",
-                    "position": [
-                        0,
-                        2.5
-                    ],
-                    "duration": 0.3,
-                    "icon": "Search"
-                },
-                {
-                    "id": "sql_translator",
+                    "id": "sql",
                     "name": "SQL Translator",
                     "type": "processing",
                     "position": [
@@ -463,7 +910,7 @@
                     "icon": "Code"
                 },
                 {
-                    "id": "customer_db",
+                    "id": "db",
                     "name": "Customer Database",
                     "type": "retrieval",
                     "position": [
@@ -474,50 +921,672 @@
                     "icon": "Database"
                 },
                 {
-                    "id": "cortex_agent",
-                    "name": "Cortex Agent",
+                    "id": "viz",
+                    "name": "Visualization",
                     "type": "presentation",
                     "position": [
                         0,
                         5.5
                     ],
                     "duration": 0.3,
+                    "icon": "BarChart"
+                },
+                {
+                    "id": "cortex",
+                    "name": "Cortex AI",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        6.5
+                    ],
+                    "duration": 0.4,
                     "icon": "Bot"
                 }
             ],
             "edges": [
                 {
-                    "source": "intent_agent",
+                    "source": "intent",
                     "target": "supervisor"
                 },
                 {
                     "source": "supervisor",
-                    "target": "compliance_pii"
+                    "target": "compliance"
                 },
                 {
-                    "source": "compliance_pii",
-                    "target": "query_decomposition"
+                    "source": "compliance",
+                    "target": "sql"
                 },
                 {
-                    "source": "query_decomposition",
-                    "target": "sql_translator"
+                    "source": "sql",
+                    "target": "db"
                 },
                 {
-                    "source": "sql_translator",
-                    "target": "customer_db"
+                    "source": "db",
+                    "target": "viz"
                 },
                 {
-                    "source": "customer_db",
-                    "target": "cortex_agent"
+                    "source": "viz",
+                    "target": "cortex"
                 }
             ],
-            "answer": "**Top 10 Customers by Lifetime Value**\n\n1. **TechCorp Inc.** - $245,000 (Enterprise)\n2. **Global Retail Solutions** - $189,500 (Enterprise)\n3. **DataDriven LLC** - $156,200 (Enterprise)\n4. **SmartBuy Co.** - $134,800 (Premium)\n5. **Innovation Partners** - $121,300 (Premium)\n6. **NextGen Systems** - $108,900 (Premium)\n7. **Future Ventures** - $98,700 (Premium)\n8. **Digital Dynamics** - $87,400 (Premium)\n9. **Strategic Solutions** - $76,200 (Standard)\n10. **Growth Enterprises** - $68,500 (Standard)\n\n**Total LTV (Top 10)**: $1.29M\n**Average Order Value**: $2,340\n\n*✅ PII compliance validated - customer data masked per RBAC policy*",
+            "answer": "### 🏆 Top 10 High-Value Customers\n\n**Summary**: Your top 10 accounts contribute **18% of total revenue**. 3 are at high risk of churn.\n\n#### 📊 Client Leaderboard (LTV)\n| Rank | Customer Name | Segment | Lifetime Value | Status |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | **TechCorp Inc.** | Enterprise | $245,000 | 🟢 Active |\n| 2 | **Global Retail** | Enterprise | $189,500 | 🟢 Active |\n| 3 | **DataDriven LLC** | Enterprise | $156,200 | 🟡 At Risk |\n| 4 | **SmartBuy Co.** | Premium | $134,800 | 🟢 Active |\n| 5 | **Innovation Ptnrs** | Premium | $121,300 | 🔴 Churn Risk |\n| 6 | **NextGen Sys** | Premium | $108,900 | 🟢 Active |\n| 7 | **Future Ventures** | Premium | $98,700 | 🟢 Active |\n| 8 | **Digital Dynamics** | Premium | $87,400 | 🟡 At Risk |\n| 9 | **Strat Solutions** | Standard | $76,200 | 🟢 Active |\n| 10 | **Growth Ent.** | Standard | $68,500 | 🟢 Active |\n\n**Total Value (Top 10)**: $1.29M\n*✅ PII Compliance: Data Masked per RBAC Level 2*",
+            "chart": {
+                "type": "bar",
+                "title": "Customer Lifetime Value (LTV)",
+                "xAxisKey": "name",
+                "seriesKey": "value",
+                "data": [
+                    {
+                        "name": "TechCorp",
+                        "value": 245000
+                    },
+                    {
+                        "name": "Global Retail",
+                        "value": 189500
+                    },
+                    {
+                        "name": "DataDriven",
+                        "value": 156200
+                    },
+                    {
+                        "name": "SmartBuy",
+                        "value": 134800
+                    },
+                    {
+                        "name": "Innovation",
+                        "value": 121300
+                    },
+                    {
+                        "name": "NextGen",
+                        "value": 108900
+                    },
+                    {
+                        "name": "Future",
+                        "value": 98700
+                    },
+                    {
+                        "name": "Digital",
+                        "value": 87400
+                    },
+                    {
+                        "name": "Strat",
+                        "value": 76200
+                    },
+                    {
+                        "name": "Growth",
+                        "value": 68500
+                    }
+                ]
+            },
             "followUp": [
                 "Show purchase history for TechCorp Inc.",
                 "Predict churn risk for these top 10",
                 "Recommend upsell products for Retail Solutions",
                 "Export this list to CRM"
             ]
+        },
+        "q9_followup_1": {
+            "question": "Show purchase history for TechCorp Inc.",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.2,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "supervisor",
+                    "name": "Supervisor",
+                    "type": "orchestration",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 0.2,
+                    "icon": "Cpu"
+                },
+                {
+                    "id": "history",
+                    "name": "History Retriever",
+                    "type": "retrieval",
+                    "position": [
+                        0,
+                        2
+                    ],
+                    "duration": 0.8,
+                    "icon": "History"
+                },
+                {
+                    "id": "viz",
+                    "name": "Visualization",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        3
+                    ],
+                    "duration": 0.4,
+                    "icon": "List"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent",
+                    "target": "supervisor"
+                },
+                {
+                    "source": "supervisor",
+                    "target": "history"
+                },
+                {
+                    "source": "history",
+                    "target": "viz"
+                }
+            ],
+            "answer": "### 📜 Purchase History: TechCorp Inc.\n\n**Account Status**: Active (Since 2021)\n**Total Orders**: 47\n\n#### 🗓️ Recent Transactions (Last 6 Months)\n| Date | Order ID | Items | Total | Status |\n| :--- | :--- | :--- | :--- | :--- |\n| **Feb 02, 2025** | #ORD-9921 | Enterprise Server Rack (x2) | $12,400 | 🚚 Shipped |\n| **Jan 15, 2025** | #ORD-9844 | Network Switches (x10) | $8,500 | ✅ Delivered |\n| **Dec 10, 2024** | #ORD-9102 | annual Maintenance Plan | $25,000 | ✅ Active |\n| **Nov 22, 2024** | #ORD-8839 | Pro Laptops (x50) | $65,000 | ✅ Delivered |\n\n*Synced with ERP System (SAP)*",
+            "chart": {
+                "type": "area",
+                "title": "TechCorp Spend Trend (6 Months)",
+                "xAxisKey": "month",
+                "seriesKey": "spend",
+                "data": [
+                    {
+                        "month": "Sep",
+                        "spend": 12000
+                    },
+                    {
+                        "month": "Oct",
+                        "spend": 18500
+                    },
+                    {
+                        "month": "Nov",
+                        "spend": 65000
+                    },
+                    {
+                        "month": "Dec",
+                        "spend": 25000
+                    },
+                    {
+                        "month": "Jan",
+                        "spend": 8500
+                    },
+                    {
+                        "month": "Feb",
+                        "spend": 12400
+                    }
+                ]
+            }
+        },
+        "q9_followup_2": {
+            "question": "Predict churn risk for these top 10",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent",
+                    "type": "understanding",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.2,
+                    "icon": "Lightbulb"
+                },
+                {
+                    "id": "ml",
+                    "name": "Churn Model (XGBoost)",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 1.2,
+                    "icon": "Activity"
+                },
+                {
+                    "id": "viz",
+                    "name": "Risk Dashboard",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        2
+                    ],
+                    "duration": 0.4,
+                    "icon": "AlertTriangle"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "intent",
+                    "target": "ml"
+                },
+                {
+                    "source": "ml",
+                    "target": "viz"
+                }
+            ],
+            "answer": "### ⚠️ Churn Risk Analysis (Top 10)\n\nWe have identified **2 accounts** with high churn probability (>75%) based on usage patterns and support ticket sentiment.\n\n#### 🚨 High Risk Alerts\n1.  **Innovation Partners (Risk: 82%)**\n    *   **Reason**: 3 unresolved critical support tickets in Jan. Usage down 40% YoY.\n    *   **Action**: Schedule VP-level check-in immediately.\n\n2.  **DataDriven LLC (Risk: 65%)**\n    *   **Reason**: Contract up for renewal in 30 days; no engagement with account manager.\n    *   **Action**: Send 'Early Renewal' incentive offer.\n\n*Model Accuracy: 92% (Backtested)*"
+        },
+        "q4_followup_1": {
+            "question": "Apply recommended price changes to Northwest",
+            "agents": [
+                {
+                    "id": "auth",
+                    "name": "Auth & Governance",
+                    "type": "validation",
+                    "position": [
+                        0,
+                        0
+                    ],
+                    "duration": 0.5,
+                    "icon": "Lock"
+                },
+                {
+                    "id": "erppush",
+                    "name": "ERP Write-Back",
+                    "type": "processing",
+                    "position": [
+                        0,
+                        1
+                    ],
+                    "duration": 1.5,
+                    "icon": "Save"
+                },
+                {
+                    "id": "confirm",
+                    "name": "Confirmation",
+                    "type": "presentation",
+                    "position": [
+                        0,
+                        2
+                    ],
+                    "duration": 0.3,
+                    "icon": "CheckCircle"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "auth",
+                    "target": "erppush"
+                },
+                {
+                    "source": "erppush",
+                    "target": "confirm"
+                }
+            ],
+            "answer": "### ✅ Price Update Executed\n\n**Action**: Decrease 'Electronics' Category Prices by **8%** in **Northwest Region**.\n\n**Status**:\n*   ✅ Governance Check Passed (User: Admin)\n*   ✅ ERP System Updated (Oracle Netsuite)\n*   ✅ Store Sync Scheduled (Tonight 02:00 AM)\n\n**Projected Impact**: +15% Unit Volume, +$45k Monthly Revenue recovery.",
+            "chart": {
+                "type": "area",
+                "title": "Projected Recovery (Revenue)",
+                "xAxisKey": "month",
+                "seriesKey": "revenue",
+                "data": [
+                    {
+                        "month": "Feb (Current)",
+                        "revenue": 26000
+                    },
+                    {
+                        "month": "Mar (Proj)",
+                        "revenue": 38000
+                    },
+                    {
+                        "month": "Apr (Proj)",
+                        "revenue": 45000
+                    }
+                ]
+            }
+        },
+        "q3_followup_1": {
+            "question": "Drill down into 'New' customer churn reasons",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent",
+                    "type": "understanding",
+                    "duration": 0.3
+                },
+                {
+                    "id": "churn",
+                    "name": "Churn Analyzer",
+                    "type": "processing",
+                    "duration": 0.8
+                },
+                {
+                    "id": "viz",
+                    "name": "Visualization",
+                    "type": "presentation",
+                    "duration": 0.4
+                }
+            ],
+            "edges": [],
+            "answer": "### 🔍 'New' Customer Churn Deep Dive\n\n**Primary Driver**: Unexpectedly high shipping costs & lack of onboarding.\n\n#### Top 3 Churn Reasons (Survey Data):\n1.  **Shipping Cost Surprise (52%)**: Customers abandon after seeing $15+ shipping fee.\n2.  **Product Confusion (28%)**: 'Smart Hub' setup was too difficult.\n3.  **Better Offer Elsewhere (15%)**: Competitor welcome discount (20% off).\n\n**Recommendation**: Implement free shipping threshold at $50 for first-time buyers.",
+            "chart": {
+                "type": "bar",
+                "title": "Churn Drivers: New Customers",
+                "xAxisKey": "reason",
+                "seriesKey": "percentage",
+                "data": [
+                    {
+                        "reason": "Shipping Cost",
+                        "percentage": 52
+                    },
+                    {
+                        "reason": "Difficulty",
+                        "percentage": 28
+                    },
+                    {
+                        "reason": "Competitor",
+                        "percentage": 15
+                    },
+                    {
+                        "reason": "Other",
+                        "percentage": 5
+                    }
+                ]
+            }
+        },
+        "q5_followup_1": {
+            "question": "Show refund trends over last year",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent",
+                    "type": "understanding",
+                    "duration": 0.3
+                },
+                {
+                    "id": "refunds",
+                    "name": "Refund Ledger",
+                    "type": "retrieval",
+                    "duration": 0.6
+                },
+                {
+                    "id": "viz",
+                    "name": "Trend Analysis",
+                    "type": "presentation",
+                    "duration": 0.4
+                }
+            ],
+            "edges": [],
+            "answer": "### 📉 Refund Trend Analysis (Trailing 12 Months)\n\nRefund volume has **spiked 45%** in Q1 2025 compared to Q1 2024.\n\n*   **Total Refunds (T12M)**: $482,000\n*   **Peak Month**: January 2025 (Post-holiday returns + 'CyberLegends' recall)\n\n**Operational Impact**: Warehouse processing time increased by 3.5 days.",
+            "chart": {
+                "type": "area",
+                "title": "Monthly Refund Volume",
+                "xAxisKey": "month",
+                "seriesKey": "amount",
+                "data": [
+                    {
+                        "month": "Aug",
+                        "amount": 28000
+                    },
+                    {
+                        "month": "Sep",
+                        "amount": 31000
+                    },
+                    {
+                        "month": "Oct",
+                        "amount": 29000
+                    },
+                    {
+                        "month": "Nov",
+                        "amount": 42000
+                    },
+                    {
+                        "month": "Dec",
+                        "amount": 65000
+                    },
+                    {
+                        "month": "Jan",
+                        "amount": 124000
+                    }
+                ]
+            }
+        },
+        "q3_followup_2": {
+            "question": "Simulate impact of removing 20% coupons",
+            "agents": [
+                {
+                    "id": "sim",
+                    "name": "Simulator",
+                    "type": "processing",
+                    "duration": 1.0
+                }
+            ],
+            "edges": [],
+            "answer": "### 🔮 Simulation Results: Coupon Removal\n\n**Scenario**: Remove 20% discount for 'Budget' segment.\n\n**Predicted Outcome**:\n*   **Revenue**: +$12,000 (Short term)\n*   **Churn**: +15% increase in churn rate\n*   **Net Impact**: **Negative** (-$45,000 LTV impact)\n\n**Recommendation**: Reduce coupon to 10% instead of removal.",
+            "chart": {
+                "type": "bar",
+                "title": "Projects Impact (Net)",
+                "xAxisKey": "metric",
+                "seriesKey": "val",
+                "data": [
+                    {
+                        "metric": "Rev",
+                        "val": 12000
+                    },
+                    {
+                        "metric": "LTV Loss",
+                        "val": -45000
+                    }
+                ]
+            }
+        },
+        "q3_followup_3": {
+            "question": "Show margin comparison by segment",
+            "agents": [
+                {
+                    "id": "margin",
+                    "name": "Margin Calc",
+                    "type": "processing",
+                    "duration": 0.8
+                }
+            ],
+            "edges": [],
+            "answer": "### 📊 Margin Analysis by Segment\n\n*   **Premium**: 42% (High value items)\n*   **Core**: 35% (Volume driver)\n*   **Budget**: 18% (Eroded by coupons)\n*   **New**: 22% (Acquisition costs high)",
+            "chart": {
+                "type": "bar",
+                "title": "Gross Margin %",
+                "xAxisKey": "seg",
+                "seriesKey": "margin",
+                "data": [
+                    {
+                        "seg": "Premium",
+                        "margin": 42
+                    },
+                    {
+                        "seg": "Core",
+                        "margin": 35
+                    },
+                    {
+                        "seg": "Budget",
+                        "margin": 18
+                    },
+                    {
+                        "seg": "New",
+                        "margin": 22
+                    }
+                ]
+            }
+        },
+        "q3_followup_4": {
+            "question": "Draft email campaign for 'Budget' segment upsell",
+            "agents": [
+                {
+                    "id": "writer",
+                    "name": "Copywriter",
+                    "type": "generation",
+                    "duration": 1.2
+                }
+            ],
+            "edges": [],
+            "answer": "### 📧 Draft Campaign: 'Upgrade & Save'\n\n**Subject**: Unlock VIP Perks (Without the Coupons)\n\n**Body**:\nHi [Name],\n\nYou've been a loyal shopper! We noticed you love our accessories. Did you know you can unlock **free shipping** and **exclusive previews** by upgrading to our Core Membership?\n\n[Button: Upgrade Now]"
+        },
+        "q4_followup_2": {
+            "question": "Check inventory levels in Northwest warehouses",
+            "agents": [
+                {
+                    "id": "inv",
+                    "name": "Inventory Check",
+                    "type": "retrieval",
+                    "duration": 0.5
+                }
+            ],
+            "edges": [],
+            "answer": "### 📦 Northwest Inventory Status\n\n**Total Stock**: 14,500 Units\n\n*   **Smart Hubs**: 2,100 (High)\n*   **Security Cameras**: 850 (Low - Restock needed)\n*   **Sensors**: 5,000 (Adequate)",
+            "chart": {
+                "type": "bar",
+                "title": "Stock Levels (NW)",
+                "xAxisKey": "item",
+                "seriesKey": "qty",
+                "data": [
+                    {
+                        "item": "Hubs",
+                        "qty": 2100
+                    },
+                    {
+                        "item": "Cameras",
+                        "qty": 850
+                    },
+                    {
+                        "item": "Sensors",
+                        "qty": 5000
+                    }
+                ]
+            }
+        },
+        "q4_followup_3": {
+            "question": "Compare competitor prices for 'Smart Hubs'",
+            "agents": [
+                {
+                    "id": "comp",
+                    "name": "Price Scraper",
+                    "type": "retrieval",
+                    "duration": 1.0
+                }
+            ],
+            "edges": [],
+            "answer": "### 🏷️ Price Comparison: Smart Hubs\n\n*   **Us**: $149.99\n*   **SmartHome Depot**: $129.99\n*   **TechGiant**: $134.50\n*   **ElectroWorld**: $149.99\n\n*We are $20 above the lowest competitor.*",
+            "chart": {
+                "type": "bar",
+                "title": "Competitor Pricing ($)",
+                "xAxisKey": "store",
+                "seriesKey": "price",
+                "data": [
+                    {
+                        "store": "Us",
+                        "price": 149.99
+                    },
+                    {
+                        "store": "SmartHome",
+                        "price": 129.99
+                    },
+                    {
+                        "store": "TechGiant",
+                        "price": 134.50
+                    }
+                ]
+            }
+        },
+        "q4_followup_4": {
+            "question": "List all affected SKUs",
+            "agents": [
+                {
+                    "id": "list",
+                    "name": "SKU Lister",
+                    "type": "retrieval",
+                    "duration": 0.4
+                }
+            ],
+            "edges": [],
+            "answer": "### 📋 Affected SKUs (Northwest Price Mismatch)\n\n1.  **SKU-9921**: Smart Hub Pro (Gap: 15%)\n2.  **SKU-8821**: Outdoor Cam 4K (Gap: 12%)\n3.  **SKU-7721**: Motion Sensor Pack (Gap: 8%)"
+        },
+        "q5_followup_2": {
+            "question": "Contact supplier for 'CyberLegends 2077'",
+            "agents": [
+                {
+                    "id": "email",
+                    "name": "Vendor Comms",
+                    "type": "generation",
+                    "duration": 0.8
+                }
+            ],
+            "edges": [],
+            "answer": "### ✉️ Email Drafted to Vendor (GameCorp)\n\n**Subject**: URGENT - Defect Notice for Batch #992\n**Priority**: High\n\n**Status**: Sent to vendor portal. Awaiting RMA authorization."
+        },
+        "q5_followup_3": {
+            "question": "Update sizing guide for Winter Jackets",
+            "agents": [
+                {
+                    "id": "cms",
+                    "name": "CMS Update",
+                    "type": "processing",
+                    "duration": 0.6
+                }
+            ],
+            "edges": [],
+            "answer": "### ✅ CMS Task Created\n\n**Ticket**: #WEB-221\n**Task**: Update 'Winter Jacket' size chart to reflect 'Runs Small' warning.\n**Assignee**: Content Team\n**Due**: Today 5:00 PM"
+        },
+        "q5_followup_4": {
+            "question": "Identify customers with >50% return rate",
+            "agents": [
+                {
+                    "id": "risk",
+                    "name": "Fraud Detection",
+                    "type": "processing",
+                    "duration": 1.1
+                }
+            ],
+            "edges": [],
+            "answer": "### 🚩 High Return Rate Customers\n\nFound **12 customers** with >50% return rate (and >3 orders).\n\n1.  **J. Doe** (6 orders, 5 returns)\n2.  **A. Smith** (4 orders, 3 returns)\n\n**Recommendation**: Flag accounts for manual review."
+        },
+        "q9_followup_3": {
+            "question": "Recommend upsell products for Retail Solutions",
+            "agents": [
+                {
+                    "id": "rec",
+                    "name": "Recommender",
+                    "type": "processing",
+                    "duration": 0.7
+                }
+            ],
+            "edges": [],
+            "answer": "### 💡 Recommendations for Global Retail\n\nBased on their purchase of 'POS Systems', they are likely to need:\n\n1.  **Extended Warranty (Gold)**: 45% conversion probability.\n2.  **Training Services**: 30% conversion probability.\n3.  **Backup Power Units**: 25% conversion probability.",
+            "chart": {
+                "type": "bar",
+                "title": "Conversion Prob (%)",
+                "xAxisKey": "prod",
+                "seriesKey": "prob",
+                "data": [
+                    {
+                        "prod": "Warranty",
+                        "prob": 45
+                    },
+                    {
+                        "prod": "Training",
+                        "prob": 30
+                    },
+                    {
+                        "prod": "Power",
+                        "prob": 25
+                    }
+                ]
+            }
+        },
+        "q9_followup_4": {
+            "question": "Export this list to CRM",
+            "agents": [
+                {
+                    "id": "api",
+                    "name": "Salesforce API",
+                    "type": "processing",
+                    "duration": 1.4
+                }
+            ],
+            "edges": [],
+            "answer": "### ✅ Export Successful\n\n**Destination**: Salesforce (Production)\n**Records Created**: 10 Leads / 2 Opportunities\n**Tag**: 'High_LTV_Risk_Check'\n\n*Link to CRM List: [View in Salesforce](#)*"
         }
     },
     "employee-db": {
@@ -525,7 +1594,7 @@
             "question": "How many employees do we have?",
             "agents": [
                 {
-                    "id": "intent_agent",
+                    "id": "intent",
                     "name": "Intent Agent",
                     "type": "understanding",
                     "position": [
@@ -547,7 +1616,7 @@
                     "icon": "Cpu"
                 },
                 {
-                    "id": "sql_translator",
+                    "id": "sql",
                     "name": "SQL Translator",
                     "type": "processing",
                     "position": [
@@ -558,7 +1627,7 @@
                     "icon": "Code"
                 },
                 {
-                    "id": "hr_database",
+                    "id": "db",
                     "name": "HR Database",
                     "type": "retrieval",
                     "position": [
@@ -569,7 +1638,7 @@
                     "icon": "Database"
                 },
                 {
-                    "id": "cortex_agent",
+                    "id": "cortex",
                     "name": "Cortex Agent",
                     "type": "presentation",
                     "position": [
@@ -582,29 +1651,193 @@
             ],
             "edges": [
                 {
-                    "source": "intent_agent",
+                    "source": "intent",
                     "target": "supervisor"
                 },
                 {
                     "source": "supervisor",
-                    "target": "sql_translator"
+                    "target": "sql"
                 },
                 {
-                    "source": "sql_translator",
-                    "target": "hr_database"
+                    "source": "sql",
+                    "target": "db"
                 },
                 {
-                    "source": "hr_database",
-                    "target": "cortex_agent"
+                    "source": "db",
+                    "target": "cortex"
                 }
             ],
-            "answer": "**Total Employees**: 247\n\n### Breakdown by Department:\n- Engineering: 89 (36%)\n- Sales: 62 (25%)\n- Operations: 47 (19%)\n- Marketing: 28 (11%)\n- Finance: 21 (9%)\n\n### Employment Type:\n- Full-time: 231 (94%)\n- Contract: 16 (6%)",
+            "answer": "### 📦 Product Return Analysis\n\n**Video Games** and **Winter Wear** are seeing abnormal return rates this quarter.\n\n#### 🚨 High Return Categories\n1.  **Video Games (18.2%)**\n    *   *Top Issue*: \"Disc unreadable\" / Glitchy batch on 'CyberLegends 2077'.\n2.  **Winter Jackets (15.4%)**\n    *   *Top Issue*: Sizing mismatch (Runs small).\n\n**Total Cost of Returns**: $124,000 (Q1)\n**Action**: Halt shipments of 'CyberLegends 2077' Batch #992.",
+            "chart": {
+                "type": "bar",
+                "title": "Return Rate by Category (%)",
+                "xAxisKey": "category",
+                "seriesKey": "rate",
+                "data": [
+                    {
+                        "category": "Video Games",
+                        "rate": 18.2
+                    },
+                    {
+                        "category": "Winter Wear",
+                        "rate": 15.4
+                    },
+                    {
+                        "category": "Electronics",
+                        "rate": 5.1
+                    },
+                    {
+                        "category": "Home Goods",
+                        "rate": 3.2
+                    },
+                    {
+                        "category": "Beauty",
+                        "rate": 2.8
+                    }
+                ]
+            },
             "followUp": [
-                "Show org chart for Engineering",
-                "List open positions in Sales",
-                "Analyze efficienty per department",
-                "Compare headcount to last year"
+                "Contact supplier for 'CyberLegends 2077'",
+                "Update sizing guide for Winter Jackets",
+                "Show refund trends over last year",
+                "Identify customers with >50% return rate"
             ]
+        },
+        "q16_followup_1": {
+            "question": "Show org chart for Engineering",
+            "agents": [
+                {
+                    "id": "intent",
+                    "name": "Intent",
+                    "type": "understanding",
+                    "duration": 0.2
+                },
+                {
+                    "id": "hrms",
+                    "name": "Workday Integration",
+                    "type": "retrieval",
+                    "duration": 0.7
+                },
+                {
+                    "id": "viz",
+                    "name": "Org Visualizer",
+                    "type": "presentation",
+                    "duration": 0.5
+                }
+            ],
+            "edges": [],
+            "answer": "### 🏗️ Engineering Department Structure\n\n**VP of Engineering**: Sarah Chen\n\n#### Direct Reports:\n1.  **Backend Systems** (Lead: Mike Ross) - 35 Engineers\n2.  **Frontend Experience** (Lead: Jessica Pearson) - 28 Engineers\n3.  **DevOps & Infra** (Lead: Louis Litt) - 15 Engineers\n4.  **QA & Automation** (Lead: Rachel Zane) - 10 Engineers\n\n*Total Headcount: 89*",
+            "chart": {
+                "type": "bar",
+                "title": "Engineering Headcount Distribution",
+                "xAxisKey": "team",
+                "seriesKey": "count",
+                "data": [
+                    {
+                        "team": "Backend",
+                        "count": 35
+                    },
+                    {
+                        "team": "Frontend",
+                        "count": 28
+                    },
+                    {
+                        "team": "DevOps",
+                        "count": 15
+                    },
+                    {
+                        "team": "QA",
+                        "count": 10
+                    },
+                    {
+                        "team": "Management",
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        "q16_followup_2": {
+            "question": "List open positions in Sales",
+            "agents": [
+                {
+                    "id": "ats",
+                    "name": "ATS Scan",
+                    "type": "retrieval",
+                    "duration": 0.6
+                }
+            ],
+            "edges": [],
+            "answer": "### 💼 Open Sales Positions\n\n1.  **Enterprise Account Executive** (Northwest) - High Priority\n2.  **Sales Development Rep** (Remote) - 3 Openings\n3.  **Regional Sales Manager** (East Coast)"
+        },
+        "q16_followup_3": {
+            "question": "Analyze efficienty per department",
+            "agents": [
+                {
+                    "id": "kpi",
+                    "name": "KPI Analyzer",
+                    "type": "processing",
+                    "duration": 0.9
+                }
+            ],
+            "edges": [],
+            "answer": "### ⚡ Efficiency Metrics (Rev/Employee)\n\n*   **Sales**: $1.2M / emp (High)\n*   **Engineering**: N/A (Cost Center)\n*   **Ops**: $450k / emp\n\n**Observation**: Sales efficiency is up 12% YoY.",
+            "chart": {
+                "type": "bar",
+                "title": "Rev per Employee ($k)",
+                "xAxisKey": "dept",
+                "seriesKey": "val",
+                "data": [
+                    {
+                        "dept": "Sales",
+                        "val": 1200
+                    },
+                    {
+                        "dept": "Ops",
+                        "val": 450
+                    }
+                ]
+            }
+        },
+        "q16_followup_4": {
+            "question": "Compare headcount to last year",
+            "agents": [
+                {
+                    "id": "hist",
+                    "name": "History Compare",
+                    "type": "processing",
+                    "duration": 0.5
+                }
+            ],
+            "edges": [],
+            "answer": "### 👥 Headcount Growth (YoY)\n\n*   **2024**: 198 Employees\n*   **2025**: 247 Employees\n\n**Growth**: +24.7%\n**Fastest Growing**: Engineering (+40%)",
+            "chart": {
+                "type": "area",
+                "title": "Total Headcount Trend",
+                "xAxisKey": "year",
+                "seriesKey": "count",
+                "data": [
+                    {
+                        "year": "2021",
+                        "count": 150
+                    },
+                    {
+                        "year": "2022",
+                        "count": 175
+                    },
+                    {
+                        "year": "2023",
+                        "count": 185
+                    },
+                    {
+                        "year": "2024",
+                        "count": 198
+                    },
+                    {
+                        "year": "2025",
+                        "count": 247
+                    }
+                ]
+            }
         }
     }
 }
